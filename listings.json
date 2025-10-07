@@ -2,13 +2,17 @@
   {
     "listing": "/by-statsds-topic.html",
     "items": [
-      "/anw/kaplan_meier/index.html"
+      "/anw/kaplan_meier/index.html",
+      "/baseball/mlb_injuries/index.html",
+      "/baseball/mlb_prime_age/index.html"
     ]
   },
   {
     "listing": "/index.html",
     "items": [
-      "/anw/kaplan_meier/index.html"
+      "/anw/kaplan_meier/index.html",
+      "/baseball/mlb_injuries/index.html",
+      "/baseball/mlb_prime_age/index.html"
     ]
   }
 ]
