@@ -75,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
     const options = {
       valueNames: ['listing-image','listing-title','listing-author','listing-date','listing-categories','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: [],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -187,6 +187,23 @@ cookieconsent.run({
  <span class="menu-text">Modules By Topic</span></a>
   </div>
 </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Anw</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./anw/kaplan_meier/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">American Ninja Warrior - Kaplan-Meier Survival Analysis</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -257,7 +274,47 @@ Disclaimer
 </div>
 <div id="listing-all-modules" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="Kaplan-Meier,Log Rank test,Nonparametric tests" data-listing-date-sort="1749013200000" data-listing-file-modified-sort="1756399017000" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="37">
+<div class="thumbnail">
+<p><a href="./anw/kaplan_meier/index.html"> <img src="_img/default_thumbnail.png" class="thumbnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./anw/kaplan_meier/index.html">
+<h3 class="no-anchor listing-title">
+American Ninja Warrior - Kaplan-Meier Survival Analysis
+</h3>
+<div class="listing-subtitle">
 
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Kaplan-Meier'); return false;">
+Kaplan-Meier
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Log Rank test'); return false;">
+Log Rank test
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Nonparametric tests'); return false;">
+Nonparametric tests
+</div>
+</div>
+<a href="./anw/kaplan_meier/index.html">
+<div class="listing-description">
+<p>Exploring Survival Analysis using the Kaplan-Meier method with American Ninja Warrior data.</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./anw/kaplan_meier/index.html">
+<div class="listing-date">
+Jun 4, 2025
+</div>
+<div class="listing-author">
+Jonathan Lieb, Rodney X. Sturdivant
+</div>
+</a>
+</div>
+</div>
 </div>
 <div class="listing-no-matching d-none">
 No matching items

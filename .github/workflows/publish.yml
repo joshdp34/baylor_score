@@ -45,6 +45,7 @@ jobs:
             any::magrittr
             any::flextable
             any::webexercises
+            any::survminer
             cache: true         # uncomment to enable dependency caching
 
       # 4 ▸ Install Quarto
