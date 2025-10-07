@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jonathan Lieb">
+<meta name="dcterms.date" content="2024-11-26">
+<meta name="description" content="Exploring MLB injury data through time series analysis and forecasting.">
+
+<title>Baylor SCORE Module Preprint Repository - MLB Injuries - Introductory Time Series Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/cookie-consent/cookie-consent.js"></script>
+<link href="../../site_libs/cookie-consent/cookie-consent.css" rel="stylesheet">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-JVDQHPRYT1"></script>
+
+<script type="text/plain" cookie-consent="tracking">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-JVDQHPRYT1', { 'anonymize_ip': true});
+</script>
+
+<script type="text/javascript" charset="UTF-8">
+document.addEventListener('DOMContentLoaded', function () {
+cookieconsent.run({
+  "notice_banner_type":"simple",
+  "consent_type":"implied",
+  "palette":"light",
+  "language":"en",
+  "page_load_consent_levels":["strictly-necessary","functionality","tracking","targeting"],
+  "notice_banner_reject_button_hide":false,
+  "preferences_center_close_button_hide":false,
+  "website_name":""
+  });
+});
+</script> 
+  
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Baylor SCORE Module Preprint Repository</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://modules.scorenetwork.org/" rel="" target="">
+ <span class="menu-text">SCORE Module Repository</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://data.scorenetwork.org/" rel="" target="">
+ <span class="menu-text">Data Repository</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../baseball/mlb_injuries/index.html">Baseball</a></li><li class="breadcrumb-item"><a href="../../baseball/mlb_injuries/index.html">MLB Injuries - Introductory Time Series Analysis</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../_team.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🏅 The Baylor SCORE Team</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../by-statsds-topic.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modules By Topic</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Anw</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../anw/kaplan_meier/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">American Ninja Warrior - Kaplan-Meier Survival Analysis</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Baseball</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../baseball/mlb_injuries/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">MLB Injuries - Introductory Time Series Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../baseball/mlb_prime_age/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">What’s the prime age of an MLB player?</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#welcome-video" id="toc-welcome-video" class="nav-link active" data-scroll-target="#welcome-video">Welcome video</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#getting-started-mlb-injury-data" id="toc-getting-started-mlb-injury-data" class="nav-link" data-scroll-target="#getting-started-mlb-injury-data">Getting started: MLB Injury data</a></li>
+  <li><a href="#visualizing-time-series-data" id="toc-visualizing-time-series-data" class="nav-link" data-scroll-target="#visualizing-time-series-data">Visualizing Time Series Data</a></li>
+  <li><a href="#autocorrelation" id="toc-autocorrelation" class="nav-link" data-scroll-target="#autocorrelation">Autocorrelation</a></li>
+  <li><a href="#decomposition" id="toc-decomposition" class="nav-link" data-scroll-target="#decomposition">Decomposition</a>
+  <ul class="collapse">
+  <li><a href="#classical-decomposition" id="toc-classical-decomposition" class="nav-link" data-scroll-target="#classical-decomposition">Classical Decomposition</a></li>
+  <li><a href="#stl-decomposition" id="toc-stl-decomposition" class="nav-link" data-scroll-target="#stl-decomposition">STL Decomposition</a></li>
+  </ul></li>
+  <li><a href="#basic-forecasting-methods" id="toc-basic-forecasting-methods" class="nav-link" data-scroll-target="#basic-forecasting-methods">Basic Forecasting Methods</a>
+  <ul class="collapse">
+  <li><a href="#the-mean-method" id="toc-the-mean-method" class="nav-link" data-scroll-target="#the-mean-method">The Mean Method</a></li>
+  <li><a href="#the-naive-method" id="toc-the-naive-method" class="nav-link" data-scroll-target="#the-naive-method">The Naive Method</a></li>
+  <li><a href="#seasonal-naive-method" id="toc-seasonal-naive-method" class="nav-link" data-scroll-target="#seasonal-naive-method">Seasonal Naive Method</a></li>
+  <li><a href="#drift-method" id="toc-drift-method" class="nav-link" data-scroll-target="#drift-method">Drift Method</a></li>
+  </ul></li>
+  <li><a href="#evaluating-forecasting-models" id="toc-evaluating-forecasting-models" class="nav-link" data-scroll-target="#evaluating-forecasting-models">Evaluating Forecasting Models</a>
+  <ul class="collapse">
+  <li><a href="#residuals" id="toc-residuals" class="nav-link" data-scroll-target="#residuals">Residuals</a></li>
+  <li><a href="#testing-and-training-for-point-estimate-evaluations" id="toc-testing-and-training-for-point-estimate-evaluations" class="nav-link" data-scroll-target="#testing-and-training-for-point-estimate-evaluations">Testing and Training for Point Estimate Evaluations</a></li>
+  </ul></li>
+  <li><a href="#forecasting" id="toc-forecasting" class="nav-link" data-scroll-target="#forecasting">Forecasting</a></li>
+  <li><a href="#more-practice" id="toc-more-practice" class="nav-link" data-scroll-target="#more-practice">More Practice</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">MLB Injuries - Introductory Time Series Analysis</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Time series plots</div>
+    <div class="quarto-category">Time series decomposition</div>
+    <div class="quarto-category">Residual analysis</div>
+    <div class="quarto-category">Simple forecasting</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Exploring MLB injury data through time series analysis and forecasting.
+  </div>
+</div>
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Jonathan Lieb </p>
+  </div>
+    <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Baylor University
+          </p>
+      </div>
+    </div>
+
+<div class="quarto-title-meta">
+
+      
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 26, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Facilitation notes">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Facilitation notes
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>This module would be suitable for an in-class lab or take-home assignment in an intermediate statistics course.</p></li>
+<li><p>It assumes a familiarity with the RStudio Environment and R programming language.</p></li>
+<li><p>Students should be provided with the following data file (.csv) and Quarto document (.qmd) to produce visualizations and write up their answers to each exercise. Their final deliverable is to turn in an .html document produced by “Rendering” the .qmd.</p>
+<ul>
+<li><a href="mlb_injuries_monthly.csv" download="">Monthly Injury Data</a></li>
+<li><a href="tj_surgeries_mlb_milb.csv" download="">Tommy John Surgeries Data</a></li>
+<li><a href="student_template.qmd">Student Quarto template</a></li>
+</ul></li>
+<li><p><a href="https://posit.cloud/">Posit Cloud</a> (via an Instructor account) or <a href="https://classroom.github.com">Github classroom</a> are good options for disseminating files to students, but simply uploading files to your university’s course management system works, too.</p></li>
+<li><p>The data for the <code>mlb_injuries_monthly.csv</code> file was derived from data found on <a href="https://www.prosportstransactions.com/baseball/Search/SearchResults.php?Player=&amp;Team=&amp;BeginDate=2000-01-01&amp;EndDate=2023-12-31&amp;DLChkBx=yes&amp;submit=Search">prosportstransactions.com</a>. The original data from the site contained rows of observations showing each transaction that involved sending a player to the injured list or bringing a player off of the injured list. The data was then filtered to include only times when a player was sent to the injured list and aggregated by month. The 2000 season was originally included in the data, but was removed after incomplete data was found for that season.</p></li>
+<li><p>The data for the <code>tj_surgeries_mlb_milb.csv</code> file was derived from data accumulated by <a href="https://docs.google.com/spreadsheets/d/1gQujXQQGOVNaiuwSN680Hq-FDVsCwvN-3AazykOBON0/edit?gid=0#gid=0"><span class="citation" data-cites="MLBPlayerAnalys">@MLBPlayerAnalys</span></a> over many years. The original data lists any reported Tommy John surgery for a player now playing in the MLB or MiLB. This data was aggregated by year to produce the data used in this module.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<section id="welcome-video" class="level1">
+<h1>Welcome video</h1>
+<iframe width="560" height="315" src="" title="placeholder">
+</iframe>
+</section>
+<section id="introduction" class="level1 page-columns page-full">
+<h1>Introduction</h1>
+<p>In this module, you will explore Major League Baseball (MLB) injury data through time series analysis and forecasting. The dataset contains monthly injury counts from 2001 to 2023. You will learn how to create time series plots, decompose time series data, and forecast future injury counts.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Coming off of COVID-19 breaks, the MLB saw a rash of injuries in the shortened 2020 season and the 2021 season.</p>
+<p>In the image below Washington Nationals star shortstop Trea Turner attempts to shake off a hit-by-pitch injury in the 9th inning of a game against the Atlanta Braves April 26th, 2021. <img src="Trea_Turner_hbp.png" class="img-fluid"></p>
+<p>Image source: <a href="https://commons.wikimedia.org/wiki/File:Trea_Turner_hit_by_pitch_in_9th_inning_from_Nationals_vs._Braves_at_Nationals_Park,_April_6th,_2021_(All-Pro_Reels_Photography)_(51101815218).png">All-Pro Reels from District of Columbia, USA</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a>, via Wikimedia Commons</p>
+</div></div><p>Injuries significantly impact a team’s performance and can be costly to the organization. In fact, at the end of the 2023 season MLB teams combined for over $1 billion worth of salaries on the injured list. The Angels single-handedly had over $145 million worth of injured player salaries, more than than three times as much money as their 26-man roster was making. This contributed heavily to their 73-89 record. On the flip side, 7 of the 11 teams with the fewest amount of money on the injured list made the playoffs. Health matters to teams, players, coaches, and the league. When injuries accumulate for teams it forces teams to play worse players-harming performance- or acquire new players at a cost-harming the team’s bottom line.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>If you’d like to see more information about MLB salary breakdowns, check out <a href="https://www.spotrac.com/mlb/payroll/_/year/2023/sort/cap_injured/dir/desc">Spotrac’s</a> webpage.</p>
+</div></div><p>Despite the rise of analytics and specialized training for players, MLB injuries feel as though they are happening more and more frequently. If this is the case there are could be major financial repercussions in the future as well as a loss in the quality of baseball being played. In this module we will investigate the issue of injuries in the MLB and see if injuries are truly on the rise in the MLB? Additionally we will look at when injuries are occurring to determine when teams should be most cautious. Are there certain months where injuries are more prevalent and what could cause injuries to occur then? Lastly, we will look at whether the amount of future injuries could be predicted using time series data. Let’s dig into the data and find out what we can learn!</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Learning Objectives">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By the end of this module you should be able to:</p>
+<ul>
+<li><p>Create time series plots in R</p></li>
+<li><p>Identify trends, seasonality, cycles, and outliers in time series data</p></li>
+<li><p>Check for autocorrelation in time series data</p></li>
+<li><p>Decompose time series data into trend, seasonal, and residual components</p></li>
+<li><p>Interpret residual plots to assess model fit</p></li>
+<li><p>Split time series data into training and test sets to evaluate forecasting models</p></li>
+<li><p>Use basic forecasting techniques to predict future injury counts</p></li>
+<li><p>Assess the accuracy of forecasts</p></li>
+</ul>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br>
+<br>
+<br>
+<br>
+</p>
+<p><strong>NOTE</strong>: Time series analysis is a powerful tool for understanding trends and patterns in data. It is used in many fields, including finance, economics, and epidemiology. In this module, we will focus on time series analysis in the context of MLB injuries.</p>
+</div></div><div class="callout callout-style-default callout-caution no-icon callout-titled" title="Research Question">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Research Question
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>During this lab we will explore the following research questions:</p>
+<ul>
+<li>What are the trends in MLB injuries over time?</li>
+<li>Are there seasonal patterns in MLB injuries?</li>
+<li>Can we forecast future injury counts?</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="getting-started-mlb-injury-data" class="level1 page-columns page-full">
+<h1>Getting started: MLB Injury data</h1>
+<p>We will begin our time series analysis by loading the MLB injury data. The dataset contains monthly injury counts from 2001 to 2023.</p>
+<p>Run the following code chunk to load the necessary libraries and the MLB injury data. In this code chunk the data is also converted to a tsibble object, which is a time series object that includes a time index and one or more columns of data. This makes it easier to work with time series data in R.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fpp3)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>injuries <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"mlb_injuries_monthly.csv"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Month =</span> <span class="fu">yearmonth</span>(Month)) <span class="sc">|&gt;</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> Month)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>TIP</strong>: As you follow along in the lab, you should run each corresponding code chunk in your .qmd document.</p>
+</div><div class="">
+<p><strong>TIP</strong>: You will most likely need to install the <code>fpp3</code> package to complete this lab. You can install it by running the following code chunk:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"fpp3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div></div>
+<p>By using the glimpse function as shown below, we can see structure of the <code>injuries</code> data. The <code>Month</code> column contains the month and year of each observation, such as “2001 Jan”. This column is formatted as a date already to make time series analysis easier. The <code>Count</code> column contains the number of players sent to the injured list each month. This is the cumulative total of players sent to the IL across the entire MLB in that month. The value of <code>Count</code> is what we are concerned with and will be forecasting in this module.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(injuries)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 276
+Columns: 2
+$ Month &lt;mth&gt; 2001 Jan, 2001 Feb, 2001 Mar, 2001 Apr, 2001 May, 2001 Jun, 2001…
+$ Count &lt;dbl&gt; 0, 0, 57, 59, 79, 92, 62, 57, 31, 2, 0, 0, 0, 0, 81, 68, 87, 77,…</code></pre>
+</div>
+</div>
+<details>
+<summary>
+<b>Variable Descriptions</b>
+</summary>
+<table class="table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 73%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Month</code></td>
+<td>The month and year</td>
+</tr>
+<tr class="even">
+<td><code>Count</code></td>
+<td>The number of players sent to the IL that month</td>
+</tr>
+</tbody>
+</table>
+</details>
+<div class="callout callout-style-default callout-important no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Terms to Know
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Before proceeding with the time series analysis, let’s make sure we understand some baseball tidbits that will help us save our analysis.</p>
+<p><strong>What is the Injured List (IL)?</strong> The injured list (IL) is a list of players who are unable to play due to injury. When a player is placed on the IL, they are not eligible to play in games for a specified period, usually 10, 15, or 60 days. The IL is used to manage player injuries and ensure that teams have enough healthy players to compete. Players on the IL do not count against the team’s active roster limit.</p>
+
+<p>For this lab, we will only be analyzing the number of players sent to the IL each month to understand trends and patterns in MLB injuries over time. We will not be looking at types of injuries, the severity of injuries, or the impact of injuries on team performance.</p>
+<p><strong>When is the MLB season?</strong> The MLB season typically runs from late March to September, with the playoffs taking place in October. The regular season consists of 162 games for each team, with games played almost every day. The season is divided into two halves, with the All-Star Game (teams get almost a full week off for the All-Star break) taking place in July. Spring training takes place in February and March.</p>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"><div class="callout-margin-content">
+<p>Click <a href="https://www.mlb.com/glossary/injuries/10-day-injured-list">here</a> to learn more about the 10-day Injured List in Major League Baseball. Other types of ILs can also be found on the site.</p>
+</div></div></section>
+<section id="visualizing-time-series-data" class="level1 page-columns page-full">
+<h1>Visualizing Time Series Data</h1>
+<p>The first step in any time series analysis is to visualize the data. This helps us understand the underlying patterns and trends in the data. There are four major things that we are looking for when we check our time series visualizations:</p>
+<ol type="1">
+<li><p><strong>Trend</strong>: A long-term increase or decrease in the data.</p></li>
+<li><p><strong>Seasonality</strong>: Repeating patterns based on a specific time period.</p></li>
+<li><p><strong>Cyclicity</strong>: Repeating patterns that are not based on a specific time period.</p></li>
+<li><p><strong>Outliers</strong>: Unusual data points that do not fit the normal pattern.</p></li>
+</ol>
+<p>We will create a time series plot of the monthly injury counts to see how the number of injuries has changed over time.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>TIP</strong>: The <code>autoplot()</code> function is a convenient way to create time series plots in R. It automatically selects an appropriate plot type based on the data provided.</p>
+</div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(injuries, Count) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Monthly MLB Injury Counts"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of Injuries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercise 1: Interpreting a Time Series Plot">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 1: Interpreting a Time Series Plot
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li><p>What is the general <strong>trend</strong> in MLB injuries over time? Are injuries increasing, decreasing, or staying relatively constant?</p></li>
+<li><p>Is there a point in time where the <strong>trend</strong> appears to change? If so, when and how does it change?</p></li>
+<li><p>Does there appear to be any <strong>seasonality</strong> in the data? If so which months have the highest injury counts and which months have the lowest injury counts?</p></li>
+<li><p>Are there obvious non-seasonal <strong>cycles</strong> in the data? If so, what might explain them?</p></li>
+<li><p>Are there any obvious <strong>outliers</strong> in the data (Are there obvious breaks or deviations from the normal trends and patterns)? If so, when do they occur and what might explain them?</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="autocorrelation" class="level1 page-columns page-full">
+<h1>Autocorrelation</h1>
+<p><strong>Autocorrelation</strong> is a measure of the <strong>linear relationship</strong> between lagged values of a time series. It can be used to help determine if there is trend or seasonality, as well as what time the seasonality is occurring at. If the autocorrelation is high for a particular lag, it suggests that the value at that lag is directly related to the value at the current time point. If a value is significantly negative, it suggests that the value at that lag is inversely related to the value at the current time point.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>TIP</strong>: Lag is the number of time periods that separate the current observation from the previous observation. For example, a lag of 1 means that the current observation is compared to the previous observation, a lag of 2 means that the current observation is compared to the observation two time periods ago, and so on.</p>
+</div></div><p>For example if there are high autocorrelations at lags 1, 2, and 3, it suggests that there is a <strong>trend</strong> in the data, since the value at time t is related to the values at times t-1, t-2, and t-3.</p>
+<p>If the autocorrelation is high at multiples of a particular lag, such as lag 12, 24, 36, …, it could suggest that the data has a monthly <strong>seasonal</strong> pattern. If the data was based on daily observations, a high autocorrelation at lag 7 would suggest a <strong>weekly</strong> pattern.</p>
+<p>If the autocorrelation is not significant at most of the lags, with none of the autocorrelations greatly exceeding the significance bounds, it suggests that the data is <strong>white noise</strong>. For a <strong>white noise</strong> series, we would expect the autocorrelations to be close to zero for all lags and the variation to be random.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>NOTE</strong>: When performing hypothesis tests we set an alpha level, which is the probability of rejecting the null hypothesis when it is true. The default alpha level is 0.05, which means we have a 5% chance of rejecting the null hypothesis when it is true. When we do multiple tests, such as in an autocorrelation plot, the probability of making at least one Type I error (false positive) increases and can be written as <span class="math inline">\(1 - (1 - \alpha)^n\)</span>, where <span class="math inline">\(n\)</span> is the number of tests. If you conduct 20 tests, the probability of making at least one Type I error is <span class="math inline">\(1 - (1 - 0.05)^{20} = 0.64\)</span>. This helps us understand that a significant result in one of the lags may be due to chance, and the time series may still be white noise.</p>
+</div></div><p>We can look at an autocorrelation plot using the <code>ACF()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>injuries <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ACF</span>(Count) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Autocorrelation of Monthly MLB Injury Counts"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Lag"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Autocorrelation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercise 2: Autocorrelation Plots">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 2: Autocorrelation Plots
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li><p>Does the autocorrelation plot suggest any <strong>trends</strong> in the data? What point(s) in the plot suggest this?</p></li>
+<li><p>Does the autocorrelation plot suggest any <strong>seasonal</strong> patterns in the data? What point(s) in the plot suggest this?</p></li>
+<li><p>Does the autocorrelation plot suggest that the data is <strong>white noise</strong>? Why or why not?</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="decomposition" class="level1 page-columns page-full">
+<h1>Decomposition</h1>
+<p>Oftentimes when performing a time series analysis we want to <strong>decompose</strong> the data into its <strong>trend</strong>, <strong>seasonal</strong>, and <strong>random</strong> components to see each part individually.</p>
+<p><strong>Additive Decomposition</strong> is a decomposition into these three components where the observed data is the sum of the trend, seasonal, and random components.</p>
+<p><span class="math display">\[y_t = T_t + S_t + R_t\]</span></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Speaking of breaking things down, when looking at injured players by team it can be found that since 2001 the Dodgers have had the most players sent to the injured list with 708. On the opposite end of the spectrum the White Sox have had the fewest players sent to the injured list with 398.</p>
+<p>Joe Crede of the Chicago White Sox is hit by a pitch during a game in 2006. The White Sox have had the fewest injuries since 2001.</p>
+<p><img src="Joe_Crede.jpg" class="img-fluid"></p>
+<p>Image Source: <a href="https://commons.wikimedia.org/wiki/File:Hit_by_pitch_joe_crede.JPG">User SecondPrint Productions (Original version) User Mattingly23 (Crop)</a>, <a href="https://creativecommons.org/licenses/by/2.0">CC BY 2.0</a>, via Wikimedia Commons</p>
+</div></div><p>Where:</p>
+<ul>
+<li><span class="math inline">\(y_t\)</span> is the observed data at time <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(T_t\)</span> is the trend component at time <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(S_t\)</span> is the seasonal component at time <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(R_t\)</span> is the random component at time <span class="math inline">\(t\)</span></li>
+</ul>
+<p>This method is useful when the seasonal variation around the trend-cycle doesn’t change as the level of the series changes.</p>
+<p>However, if the seasonal variation increases as the level of the series increases, then <strong>multiplicative decomposition</strong> is more appropriate. In this case, the observed data is the product of the trend, seasonal, and random components.</p>
+<p><span class="math display">\[y_t = T_t \times S_t \times R_t\]</span></p>
+<section id="classical-decomposition" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="classical-decomposition">Classical Decomposition</h2>
+<p>There are two common methods for decomposing time series data: <strong>classical decomposition</strong> and <strong>STL decomposition</strong>. In this module we will focus on classical decomposition.</p>
+<p><strong>Classical decomposition</strong> (additive) has four main steps:</p>
+<ol type="1">
+<li><p>Computing a trend-cycle component (<span class="math inline">\(T_t\)</span>) using a moving average. A moving average is a technique for smoothing time series data by averaging the values of neighboring points. This helps to remove short-term fluctuations and highlight longer-term trends.</p></li>
+<li><p>Computing a series without the trend-cycle component (<span class="math inline">\(y_t - T_t\)</span>).</p></li>
+<li><p>Estimating the seasonal component (<span class="math inline">\(S_t\)</span>) by averaging the values from the detrended series for the season.</p></li>
+<li><p>Computing the remainder component (<span class="math inline">\(R_t\)</span>) by subtracting the trend-cycle and seasonal components from the original series. <span class="math inline">\(R_t = y_t - T_t - S_t\)</span></p></li>
+</ol>
+<p>We can use the <code>classical_decomposition</code> function inside of the <code>model()</code> function to decompose our time series data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>injuries <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">classical_decomposition</span>(Count)) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">components</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Classical Additive Decomposition of Monthly MLB Injury Counts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Classical multiplicative decomposition works similarly to the additive decomposition, but with a few key differences.</p>
+<ul>
+<li><p>The detrended series is computed as <span class="math inline">\(y_t / T_t\)</span> instead of <span class="math inline">\(y_t - T_t\)</span>.</p></li>
+<li><p>The seasonal component is estimated as <span class="math inline">\(S_t = y_t / T_t\)</span> instead of <span class="math inline">\(y_t - T_t\)</span>.</p></li>
+<li><p>The remainder component is computed as <span class="math inline">\(R_t = y_t / (T_t \times S_t)\)</span> instead of <span class="math inline">\(y_t - T_t - S_t\)</span>.</p></li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>NOTE</strong>: Ideally, after doing a decomposition, the remainder component should be <strong>white noise</strong>.</p>
+</div></div><p>Classical multiplicative decomposition can be used by setting the <code>type</code> argument to <code>"multiplicative"</code> in the <code>classical_decomposition()</code> function.</p>
+</section>
+<section id="stl-decomposition" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="stl-decomposition">STL Decomposition</h2>
+<p>Seasonal and Trend decomposition using Loess (STL) is a more advanced method for decomposing time series data. It is more flexible than classical decomposition and can handle any type of seasonality, not just monthly or quarterly. It also allows the user to control the length of the smoothing window for the trend-cycle. Lastly, it is more robust to outliers so that they do not affect the trend and seasonal estimates as much.</p>
+<p>Below is an example of how to use the <code>STL()</code> function to decompose the time series data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>injuries <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">STL</span>(Count <span class="sc">~</span> <span class="fu">trend</span>(<span class="at">window =</span> <span class="dv">21</span>)<span class="sc">+</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">season</span>(<span class="at">window =</span> <span class="st">"periodic"</span>),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">robust =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">components</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>() <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"STL Additive Decomposition of Monthly MLB Injury Counts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>TIP</strong>: The <code>window</code> argument in the <code>trend()</code> function controls the length of the smoothing window for the trend-cycle. The larger the window, the smoother the trend. This value should always be an odd number so that a central point can be used. <code>trend(window = 21)</code> is a common choice for monthly data. This relatively large window size helps to prevent the trend from being influenced by short-term fluctuations in just a single year, but rather capture long-term trends and cycles.</p>
+<p><strong>TIP</strong>: The <code>window</code> argument in the <code>season()</code> function controls how many years the seasonal component should be estimated over. The default value is 11. When the seasonal window is set to periodic <code>season(window = "periodic")</code>, it is the equivalent setting the window to all of the data. When <code>periodic</code> is used, the seasonal component is assumed to be the same each year. The seasonal window argument should always be an odd number or “periodic”.</p>
+</div></div><div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercise 3: Changing Decomposition Types">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 3: Changing Decomposition Types
+</div>
+</div>
+<div class="callout-body-container callout-body">
+
+<ol type="a">
+<li><p>Create a classical <strong>multiplicative</strong> decomposition of the monthly MLB injury counts. How do the components differ from the additive decomposition? Which decomposition method’s remainder component looks more like <strong>white noise</strong> (classical additive or classical multiplicative)?</p></li>
+<li><p>Create an STL decomposition of the monthly MLB injury counts with a shorter length for the trend smoothing window. How does the decomposition change with a shorter trend smoothing window? Particularly, how does the trend component change?</p></li>
+</ol>
+</div>
+</div>
+<div class="no-row-height column-margin column-container"><div class="callout-margin-content">
+<p><strong>NOTE</strong>: You can actually forecast with decomposition as well. If you’d like to learn more about this click <a href="https://otexts.com/fpp3/forecasting-decomposition.html">here</a></p>
+</div></div></section>
+</section>
+<section id="basic-forecasting-methods" class="level1">
+<h1>Basic Forecasting Methods</h1>
+<p>Now that we’ve explored the data and decomposed it into its components to better understand the patterns in the data, we’ll move on to forecasting. There are many methods for forecasting time series data, but we’ll focus on some basic methods in this section.</p>
+<section id="the-mean-method" class="level2">
+<h2 class="anchored" data-anchor-id="the-mean-method">The Mean Method</h2>
+<p>An extremely simple method for forecasting is the <strong>mean method</strong>. This method forecasts the next observation as the average of all the observations in the training data. This method will produce a flat forecast that is equal to the mean of the training data. The mean method is useful when the data doesn’t have a trend or seasonality.</p>
+</section>
+<section id="the-naive-method" class="level2">
+<h2 class="anchored" data-anchor-id="the-naive-method">The Naive Method</h2>
+<p>The <strong>naive method</strong> is another simple forecasting method. It forecasts the next observation as the value of the last observation in the training data. This method will produce a flat forecast that is equal to the last observation in the training data. The naive method is useful when the data appears to be random.</p>
+</section>
+<section id="seasonal-naive-method" class="level2">
+<h2 class="anchored" data-anchor-id="seasonal-naive-method">Seasonal Naive Method</h2>
+<p>The <strong>seasonal naive method</strong> is similar to the naive method, but it forecasts the next observation as the value from the same season in the previous year. This method will produce a repeating pattern of forecasts that are equal to the observations from the same season in the previous year. (Basically forever repeating the last year’s pattern). The seasonal naive method is useful when the data has a strong seasonal pattern but no trend.</p>
+</section>
+<section id="drift-method" class="level2">
+<h2 class="anchored" data-anchor-id="drift-method">Drift Method</h2>
+<p>The drift method is a simple forecasting method that assumes a linear trend in the data. It forecasts the next observation as the value of the last observation plus the average change between observations. This method will produce a forecast that will continue on a linear trend from the first observation and through the last observation in the training data. The drift method is useful when the data has a linear trend but no seasonality.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercise 4: Basic Forecasting Methods">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 4: Basic Forecasting Methods
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ol type="a">
+<li><p>Which of the above time series plots would be best forecasted using the mean method?</p></li>
+<li><p>Which of the above time series plots would be best forecasted using the seasonal naive method?</p></li>
+<li><p>Which of the above time series plots would be best forecasted using the drift method?</p></li>
+</ol>
+<p>Use the following plots of the monthly MLB injury counts and forecasts to answer the following questions.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ol start="4" type="a">
+<li><p>After looking at the forecasts from the mean, naive, seasonal naive, and drift methods for the MLB injury data, which method appears to be the best forecast?</p></li>
+<li><p>Which ones appear to be the worst forecasts?</p></li>
+<li><p>What is one major issue seen in all of the forecasts in regards to their prediction intervals?</p></li>
+</ol>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluating-forecasting-models" class="level1 page-columns page-full">
+<h1>Evaluating Forecasting Models</h1>
+<section id="residuals" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="residuals">Residuals</h2>
+<p>Checking the residuals of a model is one of the most effective ways to see how well the model is performing. Residuals are the differences between the observed values and the values predicted by the model. <span class="math inline">\(e_t = y_t - \hat{y}_t\)</span></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>It is important to note that when we are talking about residuals in this module that we are referring to the innovation residuals. Most of the time innovation residuals are the same as regular residuals, such as with our seasonal naive model. Innovation residuals are the residuals that are left over after accounting for changes made to the data such as transformations or differencing. These residuals are the ones that are used to check the model assumptions and to evaluate the model’s performance.</p>
+</div></div><p>There are 3 main things to look at when evaluating residuals:</p>
+<ul>
+<li><p>Do the residuals appear to be <strong>white noise</strong>? Remember that white noise has a mean of 0, constant variance, and shows no obvious patterns. This can be checked by looking at a time plot of the residuals.</p></li>
+<li><p>Are the residuals <strong>normally distributed</strong>? This can be checked by looking at a histogram of the residuals or by using a normal probability plot.</p></li>
+<li><p>Are the residuals <strong>uncorrelated</strong>? This can be checked by looking at the ACF plot of the residuals. There are also statistical tests that can be used to check for autocorrelation in the residuals such as the Ljung-Box test. We can use the <code>Box.test()</code> function in <strong>R</strong> to perform this test.</p></li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>The formula for the test statistic for a Ljung-Box test is:</p>
+<p><span class="math display">\[Q^{*} = T(T+2) \sum_{k=1}^{l} \frac{r^2_k}{T-k}\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(T\)</span> is the number of observations</li>
+<li><span class="math inline">\(l\)</span> is the max number of lags</li>
+<li><span class="math inline">\(r_k\)</span> is the sample autocorrelation at lag <span class="math inline">\(k\)</span></li>
+</ul>
+<p>The null hypothesis for the Ljung-Box test is that the data is not distinguishable from white noise. If the p-value is less than the significance level, we reject the null hypothesis and conclude that the data is autocorrelated.</p>
+</div></div><p>Thankfully there is a very easy way to check all of these at once in <strong>R</strong> using the <code>gg_tsresiduals()</code> function.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercise 5: Residuals Analysis">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 5: Residuals Analysis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Below is code that will create a time plot, histogram, and ACF plot of the residuals from the seasonal naive method.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>snaive_mod <span class="ot">&lt;-</span> injuries <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">SNAIVE</span>(Count <span class="sc">~</span> <span class="fu">lag</span>(<span class="st">'year'</span>)))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>snaive_mod <span class="sc">|&gt;</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gg_tsresiduals</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ol type="a">
+<li><p>Do the residuals appear to be white noise?</p></li>
+<li><p>What stands out about the time plot of the residuals?</p></li>
+<li><p>Does the histogram of the residuals appear to be normally distributed?</p></li>
+<li><p>Are the residuals uncorrelated? What lag(s) show the most significant autocorrelation and what could this mean for the model?</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="testing-and-training-for-point-estimate-evaluations" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="testing-and-training-for-point-estimate-evaluations">Testing and Training for Point Estimate Evaluations</h2>
+<p>If you want to evaluate the point estimates of a model, you can use a testing and training split. This involves training the model on the first part of the data and then testing the model on the second part of the data. This allows you to see how well the model can forecast future observations.</p>
+<p>For this example, we will split the data into a training set that contains the first 75% of the data and a testing set that contains the last 25% of the data. This means we will train the models on the data from January 2001 to December 2017 and test the models on the data from January 2018 to December 2023.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>TIP</strong>: 75-25 is a common split for training and testing data, but you can use any split that makes sense for your data. Generally the more data you have, the less percentage you need for testing. Other common splits are 70-30 or 80-20.</p>
+</div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> injuries <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">year</span>(Month) <span class="sc">&lt;</span> <span class="dv">2018</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> injuries <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">year</span>(Month) <span class="sc">&gt;=</span> <span class="dv">2018</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we have our training and testing data, we can fit the models to the training data and then forecast the testing data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>injury_fit <span class="ot">&lt;-</span> training <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="at">mean =</span> <span class="fu">MEAN</span>(Count),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">naive =</span> <span class="fu">NAIVE</span>(Count),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">snaive =</span> <span class="fu">SNAIVE</span>(Count <span class="sc">~</span> <span class="fu">lag</span>(<span class="st">'year'</span>)),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">drift =</span> <span class="fu">RW</span>(Count <span class="sc">~</span> <span class="fu">drift</span>()))</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>injury_forecasts <span class="ot">&lt;-</span> injury_fit <span class="sc">|&gt;</span> </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">new_data =</span> testing)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>TIP</strong>: You can fit multiple models at once by using the <code>model()</code> function as seen in the code to the left. The values to the left of the <code>=</code> are the names we are giving to the models and the values to the right of the <code>=</code> are the models we are fitting to the data.</p>
+<p><strong>TIP</strong>: When using the <code>forecast()</code> function, you can specify the new data you want to forecast by using the <code>new_data</code> argument. In this case, we are forecasting for the testing data.</p>
+</div></div><p>Let’s visualize the forecasts from the training data and compare them to the testing data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>injury_forecasts <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(injuries, <span class="at">level =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Forecasting Methods for Monthly MLB Injury Counts"</span>)<span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="fu">guide_legend</span>(<span class="at">title =</span> <span class="st">"Forecast"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The seasonal naive method certainly appears to be the best forecast.</p>
+<p>We can also evaluate these models using the <code>accuracy()</code> function. This function calculates a variety of accuracy measures for the forecasts, including the mean absolute error, root mean squared error, mean absolute percentage error, and more.</p>
+<p><br></p>
+<p>The <strong>mean absolute error (MAE)</strong> is the average of the absolute errors between the forecasts and the actual values. It is a measure of the average magnitude of the errors in the forecasts. We want this value to be as close to 0 as possible.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>The formula for the mean absolute error is: <span class="math display">\[\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} | y_i - \hat{y}_i |\]</span> where <span class="math inline">\(y_i\)</span> is the actual value and <span class="math inline">\(\hat{y}_i\)</span> is the forecasted value.</p>
+</div></div><p><br></p>
+<p>The <strong>root mean squared error (RMSE)</strong> is the square root of the average of the squared errors between the forecasts and the actual values. It is a measure of the standard deviation of the errors in the forecasts. We want this value to be as close to 0 as possible.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>The formula for the root mean squared error is: <span class="math display">\[\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}\]</span> Where <span class="math inline">\(y_i\)</span> is the actual value and <span class="math inline">\(\hat{y}_i\)</span> is the forecasted value.</p>
+</div></div><p><br></p>
+<p>The <strong>mean absolute percentage error (MAPE)</strong> is the average of the absolute percentage errors between the forecasts and the actual values. It is a measure of the accuracy of the forecasts. We want this value to be as close to 0 as possible.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>The formula for the mean absolute percentage error is: <span class="math display">\[\text{MAPE} = \frac{100}{n} \sum_{i=1}^{n} \left| \frac{y_i - \hat{y}_i}{y_i} \right|\]</span> where <span class="math inline">\(y_i\)</span> is the actual value and <span class="math inline">\(\hat{y}_i\)</span> is the forecasted value.</p>
+</div></div><p><br></p>
+<p>The code below displays the accuracy measures for the forecasts.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">accuracy</span>(injury_forecasts, testing)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 10
+  .model .type    ME  RMSE   MAE   MPE  MAPE  MASE RMSSE  ACF1
+  &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 drift  Test   86.0 122.   86.0   Inf   Inf   NaN   NaN 0.698
+2 mean   Test   36.2  93.9  79.2  -Inf   Inf   NaN   NaN 0.698
+3 naive  Test   86.0 122.   86.0   100   100   NaN   NaN 0.698
+4 snaive Test   14.3  58.4  34.5  -Inf   Inf   NaN   NaN 0.424</code></pre>
+</div>
+</div>
+<p>This confirms that the seasonal naive method is the best forecast, as it has the lowest MAE and RMSE values. The MAPE is shown at -Inf to Inf because some of the actual values are 0, which causes the percentage error to be infinite.</p>
+</section>
+</section>
+<section id="forecasting" class="level1 page-columns page-full">
+<h1>Forecasting</h1>
+<p>Since the seasonal naive method appears to be the best for forecasting based on our training and testing data, we will use this method to forecast the future number of Tommy John surgeries in MLB players.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>final_fit <span class="ot">&lt;-</span> injuries <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model</span>(<span class="fu">SNAIVE</span>(Count <span class="sc">~</span> <span class="fu">lag</span>(<span class="st">'year'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This model is then used to forecast for the next 3 years.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>final_forecasts <span class="ot">&lt;-</span> final_fit <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">h =</span> <span class="dv">36</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>TIP</strong>: The <code>forecast()</code> function can be used to forecast for a specific number of periods into the future by using the <code>h</code> argument. In this case, we are forecasting for 36 months (3 years). This could also be written as <code>forecast(h = "3 years")</code>.</p>
+</div></div><p>The code below visualizes the forecasted values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>final_forecasts <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(injuries) <span class="sc">+</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Forecasting MLB Injuries"</span>)<span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="fu">guide_legend</span>(<span class="at">title =</span> <span class="st">"Forecast"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Exercise 6: Forecasting MLB Injuries">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 6: Forecasting MLB Injuries
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li><p>Based on the prediction intervals, are we more precise about the forecasted number of injuries projected in 2024 or 2026? What is the general trend seen in the prediction intervals?</p></li>
+<li><p>What is the forecasted number of players placed on the IL in July 2024.</p></li>
+</ol>
+<div class="callout callout-style-default callout-caution no-icon callout-titled" title="Hint">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Use this code to extract the forecasted values for July 2024:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>final_forecasts <span class="sc">|&gt;</span> <span class="fu">filter</span>(Month <span class="sc">==</span> <span class="fu">yearmonth</span>(<span class="st">"2024-07"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<ol start="3" type="a">
+<li>What is the 95% prediction interval for the forecasted number of players placed on the IL in July 2024?</li>
+</ol>
+<div class="callout callout-style-default callout-caution no-icon callout-titled" title="Hint">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The <code>hilo</code> function can be used to extract the upper and lower bounds of the prediction interval.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>final_forecasts <span class="sc">|&gt;</span> <span class="fu">filter</span>(Month <span class="sc">==</span> <span class="fu">yearmonth</span>(<span class="st">"2024-07"</span>)) <span class="sc">|&gt;</span> <span class="fu">hilo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<ol start="4" type="a">
+<li>If you were told that 112 players were placed on the IL in July 2024, would that be surprising? Would you consider your forecast made 7 months earlier to be successful?</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="more-practice" class="level1 page-columns page-full">
+<h1>More Practice</h1>
+<p>We have covered a lot of ground in this module. To practice what you have learned, try the exercises below on your own. Each of these exercises will use data regarding the number of Tommy John surgeries performed by year on MLB and MiLB players. The data can be downloaded below:</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>The image below shows that ulnar collateral ligament in the elbow of a pitcher. This ligament is often injured due to the extreme torque placed on the elbow during the pitching motion as it whips the arm forward. <img src="Ulnar_Collateral_Ligament.png" class="img-fluid" alt="Ulnar Collateral Ligament"></p>
+<p>Image Source: <a href="https://commons.wikimedia.org/wiki/File:Anatomy_of_the_ulnar_collateral_ligament_in_the_pitcher%27s_elbow.png">R.J. Molenaars</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>, via Wikimedia Commons</p>
+</div></div><ul>
+<li><a href="tj_surgeries_mlb_milb.csv">Tommy John Surgeries Data</a></li>
+</ul>
+<div class="callout callout-style-default callout-caution no-icon callout-titled" title="What is Tommy John Surgery?">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What is Tommy John Surgery?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Tommy John surgery is a procedure in which a damaged ulnar collateral ligament in the elbow is replaced with a tendon from elsewhere in the body, usually the forearm. The surgery is named after the first baseball player to undergo the procedure, Tommy John, in 1974. The surgery is common among baseball pitchers and other athletes who put a lot of stress on their elbows. As Tommy John surgery has become more successful, the number of surgeries performed has increased, with some players even having the surgery multiple times.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Challenge 1: Visualizing the Data">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Challenge 1: Visualizing the Data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li>Load the Tommy John data into R and create a time series plot of the number of Tommy John surgeries performed by year.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>tj_surgeries <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"tj_surgeries_mlb_milb.csv"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tsibble</span>(<span class="at">index =</span> year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="2" type="a">
+<li><p>Does the data exhibit trend?</p></li>
+<li><p>Does the data exhibit seasonality?</p></li>
+<li><p>Does the data exhibit non-seasonal trend cycles?</p></li>
+<li><p>Look at the ACF plot for the number of Tommy John surgeries. Does there appear to be any autocorrelation? If so, at what lags?</p></li>
+</ol>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Hint">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You can pipe the data into the <code>gg_tsdisplay()</code> function to create a time series plot and ACF plot at the same time.</p>
+</div>
+</div>
+</div>
+<ol start="6" type="a">
+<li>If there is no seasonality in data is there any reason to do a classical decomposition?</li>
+</ol>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>Injured Earlier?</strong></p>
+<p>Not only have the number of Tommy John surgeries increased over time for MLB and MiLB players, but high school and college players are also undergoing the surgery at increasing rates. Early career injuries are becoming more common, with some players undergoing the surgery long before they reach the professional level.</p>
+<p>Nathan Eovaldi, pitcher for the 2018 World Series Champion Red Sox and 2023 World Series champions Texas Rangers, underwent Tommy John surgery in 2007 in high school. He was drafted by the Los Angeles Dodgers in 2008 and made his MLB debut in 2011. Eovaldi has since had a successful career, despite undergoing a second Tommy John surgery in 2016.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Nathan_Eovaldi.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Nathan Eovaldi</figcaption>
+</figure>
+</div>
+<p>Image Source: <a href="https://commons.wikimedia.org/wiki/File:Nathan_Eovaldi_on_May_25,_2015.jpg">Arturo Pardavila III on Flickr (Original version) UCinternational (Crop)</a>, <a href="https://creativecommons.org/licenses/by/2.0">CC BY 2.0</a>, via Wikimedia Commons)</p>
+</div></div><div class="callout callout-style-default callout-note no-icon callout-titled" title="Challenge 2: Simple Forecasting Methods">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Challenge 2: Simple Forecasting Methods
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use the following data to split the Tommy John surgeries data into training and testing sets. The training set will contain data from 1974 to 2011, and the testing set will contain data from 2012 to 2023.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> tj_surgeries <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">2011</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> tj_surgeries <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&gt;</span> <span class="dv">2011</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol type="a">
+<li>Fit a mean, naive, and drift model to the training data.</li>
+</ol>
+<ol start="2" type="a">
+<li>Plot the forecasts for the mean, naive, and drift models for the testing data along with the actual testing data. Which appears to be the best forecast? Did the models overestimate, underestimate, or accurately predict the number of Tommy John surgeries?</li>
+</ol>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Hint">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Pipe your models into <code>forecast(new_data = testing)</code> and then pipe that into <code>autoplot(testing)</code>. Set <code>level = NULL</code> in the <code>autoplot()</code> function to remove the prediction intervals from the plot.</p>
+</div>
+</div>
+</div>
+<ol start="3" type="a">
+<li>Check the accuracy of the models on the testing data. Which model has the lowest MAE, RMSE, and MAPE values?</li>
+</ol>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Hint">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Pipe your models into <code>forecast(new_data = testing)</code> and then pipe that into <code>accuracy(testing)</code> to get the accuracy measures.</p>
+</div>
+</div>
+</div>
+<ol start="4" type="a">
+<li>Fit the best type of model to the entire Tommy John dataset and forecast the number of Tommy John surgeries for the next 3 years. Plot the forecast along with the actual data. Does this forecast seem reasonable?</li>
+</ol>
+<ol start="5" type="a">
+<li>What are the forecasted values for the number of Tommy John surgeries in 2024? 2025? 2026?</li>
+</ol>
+<ol start="6" type="a">
+<li>What is the 95% prediction interval for the number of Tommy John surgeries in 2024? 2025? 2026?</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>In this module you have learned how to visualize time series data. You have also learned how the number of injuries in the MLB have changed over time. These injuries have major consequences for teams and the league as a whole, harming both performance and bottom lines. We have looked at how the injuries in the MLB change based on the month of the season, seeing higher rates shortly after the season starts and at the end of the season. This tells us that teams need to be cautious with player health particularly when they are not fully warmed up at the beginning of the season and when they are fatigued at the end of the season.</p>
+<p>Major outliers in the number of injuries were noted during and directly after the COVID-19 pandemic. These most likely can be credited to being shut down for a while and then suddenly resuming play. Lastly, you looked at different basic forecasting methods - mean, drift, naive, and seasonal naive- to forecast the number of injuries in the MLB. Performance metrics and residual plots were used to determine the best model. A seasonal naive model was the best of the simple models we looked at, since it was able to capture the seasonality in the monthly data. However, this model still falls a little short because it captures no long-term trends that may be occurring in the data.</p>
+<p>Additionally, you have learned about increases in Tommy John surgeries among baseball players and have now performed a simple time series analysis all by yourself.</p>
+<p>The topics covered in this module are just the beginning of time series analysis and meant to help you get started working with time-related data. There are many more complex and accurate forecasting methods that can be used for advanced time series forecasting such as ARIMA, TSLM, ETS, Prophet, and Neural Networks that you should look into if you are interested if learning more.</p>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<ul>
+<li>Hyndman, R.J., &amp; Athanasopoulos, G. (2021). <em>Forecasting: Principles and Practice (3rd ed.)</em>. OTexts: Melbourne, Australia. <a href="https://otexts.com/fpp3/">Online</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">Maintained by Joshua Patrick <br> We use cookies to track usage statistics to help measure impact of the materials for authors. Please consider allowing tracking cookies.<div class="cookie-consent-footer"><a href="#" id="open_preferences_center">Manage cookies</a></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
