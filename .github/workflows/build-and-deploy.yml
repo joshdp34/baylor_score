@@ -65,6 +65,7 @@ jobs:
             any::DT
             any::webexercises
             any::BSDA
+            any::SimplyAgree
 
       - name: Build generated pages
         run: |
