@@ -74,6 +74,7 @@ jobs:
             any::gt
             github::haleyjeppson/ggmosaic
             any::pwr
+            any::effectsize
 
       - name: Build generated pages
         run: |
