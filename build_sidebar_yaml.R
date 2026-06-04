@@ -29,4 +29,4 @@ for (sport in sport_names) {
 
 # Step 5: Write to sidebar-sports.yml
 writeLines(yaml_lines, "sidebar-sports.yml")
-cat("✓ sidebar-sports.yml created\n")
+cat("sidebar-sports.yml created\n")

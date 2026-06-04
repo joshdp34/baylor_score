@@ -54,5 +54,5 @@ These modules use **{sport}** data to teach topics in statistics and data scienc
   )
 
   writeLines(page_content, file_path)
-  cat(glue("✓ Created {file_path}\n"))
+  cat(glue("Created {file_path}\n"))
 }
