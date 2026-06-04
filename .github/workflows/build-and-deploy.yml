@@ -64,6 +64,7 @@ jobs:
             any::plotly
             any::DT
             any::webexercises
+            any::BSDA
 
       - name: Build generated pages
         run: |
