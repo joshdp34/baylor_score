@@ -58,7 +58,7 @@ jobs:
             any::kableExtra
             any::condformat
             any::formattable
-            any::reactablefmtr
+            github::kcuilla/reactablefmtr
             any::scales
             any::plotly
             any::DT
