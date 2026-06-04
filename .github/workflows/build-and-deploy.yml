@@ -58,6 +58,7 @@ jobs:
             any::kableExtra
             any::condformat
             any::formattable
+            github::timelyportfolio/dataui
             github::kcuilla/reactablefmtr
             any::scales
             any::plotly
