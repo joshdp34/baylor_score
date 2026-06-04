@@ -36,7 +36,7 @@ callout-icon: false
 + It assumes a basic familiarity with `R`.
 
 + Students should be provided with the following data file (.csv)
-    + [pgfreethrow.csv](pgfreethrow.csv)
+    + [pgfreethrow.csv](https://github.com/joshdp34/baylor_score/blob/main/basketball/conditional_probability/pgfreethrow.csv)
 
 :::
 
