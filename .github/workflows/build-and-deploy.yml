@@ -73,6 +73,7 @@ jobs:
             any::irr
             any::gt
             github::haleyjeppson/ggmosaic
+            any:pwr
 
       - name: Build generated pages
         run: |
