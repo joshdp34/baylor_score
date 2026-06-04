@@ -75,6 +75,8 @@ jobs:
             github::haleyjeppson/ggmosaic
             any::pwr
             any::effectsize
+            any::ggridges
+            any::cowplot
 
       - name: Build generated pages
         run: |
