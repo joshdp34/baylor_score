@@ -66,6 +66,11 @@ jobs:
             any::webexercises
             any::BSDA
             any::SimplyAgree
+            any::DescTools
+            any::fmsb
+            any::janitor
+            any::psych
+            any::irr
 
       - name: Build generated pages
         run: |
