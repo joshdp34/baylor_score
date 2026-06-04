@@ -71,6 +71,7 @@ jobs:
             any::janitor
             any::psych
             any::irr
+            any::gt
 
       - name: Build generated pages
         run: |
