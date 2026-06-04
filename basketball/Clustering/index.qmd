@@ -1,6 +1,13 @@
 ---
 title: "K-Means Clustering with NBA Data"
 author: "Caleb Skinner, Tony Munoz, Michael P.B. Gallaugher, Rodney X. Sturdivant"
+date: June 4, 2026
+image: ../../_img/default_thumbnail.png
+description: Using K-means clustering to group NBA players by performance and role.
+categories:
+  - Cluster analysis
+  - K-means
+  - Data visualization
 format:
   html:
     self-contained: true

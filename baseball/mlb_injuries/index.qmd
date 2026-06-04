@@ -7,6 +7,7 @@ author:
       - id: bay
         name: Baylor University
 date: November 26, 2024
+image: Ulnar_Collateral_Ligament.png
 format:
   html:
     grid:

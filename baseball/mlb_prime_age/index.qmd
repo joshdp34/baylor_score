@@ -16,6 +16,7 @@ author:
     affiliation:
       - ref: apu
 date: July 26, 2024
+image: ../../_img/default_thumbnail.png
 format:
   html:
     grid:

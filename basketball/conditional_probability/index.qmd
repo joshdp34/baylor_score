@@ -9,6 +9,7 @@ author:
     affiliation:
       - name: Baylor University
 date: July 18, 2024
+image: pgmissed.png
 format:
   html:
     embed-resources: true

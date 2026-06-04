@@ -1,6 +1,13 @@
 ---
 title: "MMA Inter-rater Reliability Data Analysis"
-authors: "Caleb Skinner; Joshua Patrick, PhD; Connor Bryson; Rodney X. Sturdivant, PhD "
+author: "Caleb Skinner, Joshua Patrick, PhD, Connor Bryson, Rodney X. Sturdivant, PhD"
+date: June 4, 2026
+image: ../../_img/default_thumbnail.png
+description: Exploring inter-rater reliability and agreement in MMA judging decisions.
+categories:
+  - Inter-rater reliability
+  - Kappa statistics
+  - Agreement
 format:
   html:
     theme: cosmo

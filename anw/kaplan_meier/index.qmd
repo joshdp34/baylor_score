@@ -10,6 +10,7 @@ author:
     affiliation:
       - ref: bay
 date: June 4, 2025
+image: American_Ninja_Warrior_Logo.jpg
 format:
   html:
     grid:
