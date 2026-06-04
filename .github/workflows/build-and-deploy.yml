@@ -72,6 +72,7 @@ jobs:
             any::psych
             any::irr
             any::gt
+            any::ggmosaic
 
       - name: Build generated pages
         run: |
