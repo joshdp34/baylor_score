@@ -46,6 +46,23 @@ jobs:
             any::survival
             any::survminer
             any::flextable
+            any::parameters
+            any::factoextra
+            any::NbClust
+            any::formatR
+            any::ClusterR
+            any::mclust
+            any::easystats
+            any::here
+            any::knitr
+            any::kableExtra
+            any::condformat
+            any::formattable
+            any::reactablefmtr
+            any::scales
+            any::plotly
+            any::DT
+            any::webexercises
 
       - name: Build generated pages
         run: |
