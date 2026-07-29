@@ -2123,7 +2123,7 @@ F_conf_int <- Fleiss %>% select(Collett, Lethaby, Cartlidge) %>%
   KappaM(method = "Fleiss", conf.level = .95) %>% as_tibble() %>% pull() %>%
   round(digits = 3)
 
-F_indiv <- Fleiss %>% select(Collett, Lethaby, Cartlidge) %>% kappam.fleiss(detail = TRUE)
+F_indiv <- Fleiss %>% select(Collett, Lethaby, Cartlidge) %>% as.data.frame() %>% kappam.fleiss(detail = TRUE)
 ```
 
 After evaluating, we end up with a $p_{o}$ = `r F_prop_obs`. This is our total observed agreement. It includes both real agreement and chance agreement.
@@ -2274,6 +2274,7 @@ stu_F_conf_int <- stu_Fleiss %>% select(-fight, -fighter1, -fighter2, -draw) %>%
 
 stu_F_indiv <- stu_Fleiss %>%
   select(-fight, -fighter1, -fighter2, -draw) %>%
+  as.data.frame() %>%
   kappam.fleiss(detail = TRUE)
 
 stu_F_indiv_table <- as.data.frame.matrix(stu_F_indiv$detail) %>%

@@ -7,7 +7,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -85,6 +85,12 @@ jobs:
 
       - name: Render site
         run: quarto render
+
+      - name: Commit updated freeze cache
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update quarto freeze cache [skip ci]"
+          file_pattern: "_freeze/**"
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
