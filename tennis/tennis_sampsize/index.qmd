@@ -42,20 +42,39 @@ callout-icon: false
 + [Posit Cloud](https://posit.cloud/) (via an Instructor account) or [Github classroom](https://classroom.github.com) are good options for disseminating files to students, but simply uploading files to your university's course management system works, too.
 :::
 
-# Welcome video
 
-<iframe width="560" height="315" src title="placeholder">
-
-</iframe>
 
 # Introduction
 
-In this module, you will compute the required sample size for studies involving tennis data, using data from Wimbledon 2023 matches to estimate required parameters. 
+Tennis court surfaces differ.  "Hard courts" are the most common in modern tennis, but clay and grass courts still exist.  In fact, two of the four major tournaments are not played on hard courts: Wimbledon (grass) and the French Open (clay).  A "clay court season" precedes the French Open and similarly there is a "grass court season" leading up to Wimbledon.
+
+The surface impacts the game in terms of strategy, training, and how play progresses. For example, a Koka sports author suggestion that there is “a grind on hard courts that does not show up on TV. The surface is tough on legs and backs" has implications for training.  
+
+
+```{r}
+#| echo: false
+#| fig-cap: "https://blog.kokasports.com/tennis-court-surfaces-impact/"
+#| out-width: "70%"
+knitr::include_graphics("Picture1.png")
+```
+
+One tennis academy gives tips and tricks for play on different surfaces and notes: "clay courts often witness extended rallies due to the slower ball speed upon impact with the surface."  Such an observation has ramifications for training and preparation for a clay court event.  They further discuss the importance of agility on clay courts, and speed and athleticism on grass.
+
+
+```{r}
+#| echo: false
+#| fig-cap: "https://motennistraining.com/the-impact-of-surface-type-on-tennis-strategy-and-play/"
+#| out-width: "70%"
+knitr::include_graphics("Picture2.png")
+```
+
+To fully address the differences on play due to the surface requires carefully designed studies. In this module, you will compute the required sample size for studies of research questions relating to the differences due to surface that could impact how players train and coaches strategize.  
+
+A "pilot" data set is used to estimate parameters needed for the calculations using data from Wimbledon 2023 matches, which is a grass court tournament.  Sample size calculations alwasy require estimates of unkwown parameters and such limited data is all that is available. 
+
 
 ::: {.callout-note title="Learning Objectives" appearance="minimal"}
 By the end of this module, you will be able to:
-
--   Read (import) a dataset into your RStudio Environment
 
 -   Use R to obtain estimates for various parameters from existing data
 
@@ -278,6 +297,11 @@ $H_a$: there is a difference (improvement) in first serve percentage after the t
 
 The question before the experiment is how many samples should we collect in order to test the hypothesis?
 
+::: column-margin :::
+**A note on the experiment**: careful design is required for the experiment itself; we do not discuss considerations in this module.  In the examples to follow we assume the design is such that the indepencence assumptions of the statistical tests are valid.  Can you think of how best to collect data for these studies to ensure this assumption holds?  The subject "design of experiments (DOE)" is focused on the issues with how best to plan studies.
+:::
+
+
 ##  Why does sample size matter
 
 There are several things that drive the need for sample size calculations.  One is resources.  Often it is costly - financially, time, difficulty in getting data - to conduct an experiment so we wish to do so efficiently, with the smallest sample possible.  The second is that we want a sample size that will ensure we can get meaningful results from our study.  The last thing anyone wants after spending time and money on research is for the results to be inconclusive.
@@ -414,7 +438,7 @@ Both are around 14 meters/point.  What would represent a meaningful increase for
 One tool that could help is to consider **effect size**.  Cohen (1988) offers some advice.  A metric known as Cohen's D is one measure and is defined:
 
 $$D = \frac{\mu_2 - \mu_1}{sd}$$
-where the sd is of the difference in means.  If the average distance on clay increases by one standard deviation, then $D = 1$.  In other words, Cohen's D is the increase in terms of the standard deviation.  If $D = 0.5$ that would be an increase of half of a standard deviation,
+where sd is the estimated standard deviation.  If the average distance on clay increases by one standard deviation, then $D = 1$.  In other words, Cohen's D is the increase in terms of the standard deviation.  If $D = 0.5$ that would be an increase of half of a standard deviation,
 
 An increase of 1 standard deviation (13.5 meters/point) seems large as it would nearly double the average run per point.
 
@@ -502,9 +526,9 @@ c.  How does the estimated variability in the data impact the required sample si
 
 Impact of size of the difference, **delta**.  Return to a power of 0.8, alpha of 0.05, and sd of 13.5.  
 
-a.  What value of delta leads to a small effect of D = 0.25 standard deviation increase?
+a.  What value of delta leads to a small effect size of D = 0.25 standard deviation increase?
 
-b.  What value of delta produces a large effect of D = 1 sd increase?
+b.  What value of delta produces a large effect size of D = 1 sd increase?
 
 c.  Find the sample size for the delta values computed in a and b.
 
@@ -593,7 +617,7 @@ interpret_cohens_d(prop_effect)
 
 ```
 
-The result is a "medium" effect, but practically that seems like an unlikely change.  Even though clay might reduce the serve advantage, it still probably exists.  Let's consider reducing the advantage to 65\%:
+The result is a "medium" effect size, but practically that seems like an unlikely change.  Even though clay might reduce the serve advantage, it still probably exists.  Let's consider reducing the advantage to 65\%:
 
 ```{r}
 prop_effect <- ES.h(0.75, 0.65)
@@ -626,7 +650,7 @@ The value returned is **n = 258.619** per group so we will need **n = 259 points
 
 As mentioned in the example, the hypothesized proportion impacts the estimate of the variance.  We explore this impact in this exercise. 
 
-a.  Modify the sample size calculation so that the effect is still 0.1 but based on 70\% for p1 and 60\% for p2.  What is the resulting sample size?  How does this compare to the sample size in the example using 75\% and 60\%?  
+a.  Modify the sample size calculation so that the difference in proportions is still 0.1 but based on 70\% for p1 and 60\% for p2.  What is the resulting sample size?  How does this compare to the sample size in the example using 75\% and 65\%?  
 
 b.  The variance estimate is related to the value $p \times (1-p)$.  What is this value if p = 0.75?  What is the value when p = 0.7?  Which variance is larger?
 
@@ -645,6 +669,12 @@ Formulate an additional question that involves two sample means using variables 
 Formulate an additional question that involves two sample proportions using variables available in the data set and compute sample size in similar fashion to example 2.
 
 :::
+
+# Conclusion
+
+In this module we computed sample sizes for studies to answer questions that tennis players and coaches might find interesting in preparing for matches on different tennis court surfaces.  The first was the distance players run on clay compared to grass, which has implications for training.  The second was the importance of the first serve on these surfaces which would impact strategy as well as practice regimens and player development. 
+
+The module illustrates the challenge of sample size computations to find reasonable parameter estimates.  Further, you learned how changing assumptions about these inputs impacts the sample size estimates.  Given such uncertainty, it is important to consider various scenarios and choose a sample size for the study that is most likely to produce adequate power for the most likely.  Finally, it is clear that sample size calculation does not ensure meaningful study results but hopefully improves those chances.
 
 # REFERENCES
 
