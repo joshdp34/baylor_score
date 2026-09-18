@@ -12,6 +12,7 @@ author:
     affiliation:
       - ref: baylor
 date: September 18, 2026
+image: head_injury.png
 description: "Use NFL injury records to explore one-way ANOVA, Tukey comparisons, Welch ANOVA, and Kruskal–Wallis."
 categories:
   - Football
