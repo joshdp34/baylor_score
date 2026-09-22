@@ -31,13 +31,20 @@ callout-icon: false
 
 
 
+**Intended student level:** Introductory statistics (first-year college students, including students who are not statistics or data science majors).
+
+**Estimated completion time:** 30-45 minutes.
+
 ::: {.callout-note collapse="false" title="Facilitation notes" appearance="minimal"}
-+ This module would be suitable for an in-class lab or take-home assignment in an introductory statistics course. 
+
++ Introductory statistics (first-year college students, including students who are not statistics or data science majors).
 
 + It assumes a basic familiarity with `R`.
 
 + Students should be provided with the following data file (.csv)
-    + [pgfreethrow.csv](https://github.com/joshdp34/baylor_score/blob/main/basketball/conditional_probability/pgfreethrow.csv)
+    + [pgfreethrow.csv](https://github.com/kgfitzgerald/baylor_apu_score/blob/main/basketball/conditional_probability/pgfreethrow.csv)
+
++ Estimated completion time: 30-45 minutes.
 
 :::
 
@@ -48,6 +55,8 @@ callout-icon: false
 <!-- </iframe> -->
 
 # Introduction
+
+A **free throw** is a basketball shot taken from behind the free throw line without a defender contesting the shot. Each successful free throw is worth one point ([NBA rules](https://official.nba.com/rule-no-4-definitions/)). Free throws are awarded after certain fouls or rule violations. A **trip to the free throw line** refers to the set of free throw attempts a player is awarded at one time.
 
 On June 22, 2021, game 2 of the NBA Western Conference Finals featured the Los Angeles Clippers at the Phoenix Suns. 
 
@@ -76,7 +85,7 @@ By the end of this module, you will be able to:
 
 -   Estimate conditional probabilities from data
 
--   Estimate the intersection of two events from data
+-   Estimate the probability that two events both occur using data
 
 -   Estimate the probability that Paul George misses two free throws when he goes to the line
 :::
@@ -422,7 +431,9 @@ $$
 To answer the question about missing both free throws, we must now discuss *Conditional Probability*. 
 
 
-# Estimating Conditional Probablities
+# Estimating Conditional Probabilities
+
+Why might the first shot tell us something about the second? After a miss, a player might adjust their shooting motion or feel more pressure; fatigue or game conditions might also affect both attempts. These are possible explanations to explore, rather than conclusions we can draw from the data alone. If the two shot outcomes are *independent*, knowing whether the first shot was made or missed does not change the probability of making the second. Estimating the second-shot probability separately after a make and after a miss lets us explore that assumption. Differences in the observed proportions can also arise from chance, so a difference alone does not establish dependence or show that the first shot causes the second shot's outcome.
 
 *Conditional probability* is a specific type of probability that deals with the likelihood of an event occurring given that another event has already occurred. It's denoted as 
 $$
@@ -430,7 +441,7 @@ P(A|B)
 $$
 which is read as "the probability of A occurring given that B has occurred."
 
-For Paul George's free throw attempts, let's look at the the following conditional probabilities:
+For Paul George's free throw attempts, let's look at the following conditional probabilities:
 
 1. He makes the second shot given he made the first shot.
 2. He misses the second shot given he made the first shot.
@@ -526,6 +537,8 @@ To find a conditional probability, we will use the formula
 $$
 P(A|B)=\frac{P(A\text{ and }B)}{P(B)}
 $$
+Here, $P(A\text{ and }B)$ is the probability that both events occur. The event "A and B" is also called the **intersection** of $A$ and $B$, written $A \cap B$. For example, making the first shot and making the second shot in the same trip is an intersection of two events.
+
 Let's start with the first probability above: 
 
 1. He makes the second shot given he made the first shot.
@@ -546,7 +559,7 @@ first_made |>
   print()
 ```
 
-Now we can divide this value by the total number of first shots. In the `free_throw_data` dataframe, this can be determined by just counting the number of times `shot==1`. Dividing the number of rows in `made_first` by the total number of rows where `shot==1` gives us the estimated probability for making the first shot.
+Now we can divide this value by the total number of first shots. In the `free_throw_data` dataframe, this can be determined by just counting the number of times `shot==1`. Dividing the count stored in `first_made` by the total number of rows where `shot==1` gives us the estimated probability for making the first shot.
 
 ```{r, warning = FALSE, message = FALSE, eval=T, echo=T}
 first_total = free_throw_data |> 
@@ -567,7 +580,7 @@ So we see that
 P(B_1) = `r first_made_prob`
  $$
 
-To estimate the probability $P(B_2\text{ and }B_1)$, we need to filter the data were the first shot is made and the second shot is made in the same trip to the free throw line. Since the data frame is in chronological order, we can assume the previous row in the data frame corresponds to the previous free throw attempt. In `R`, we can use the `lag` function to refer to the previous row value in our dataframe. The code `lag(make)==FALSE` will find the rows that come right after a row where `make==FALSE`. In other words, it will find the attempts where the previous shot was a miss.
+To estimate the probability $P(B_2\text{ and }B_1)$, we need to filter the data where the first shot is made and the second shot is made in the same trip to the free throw line. Since the data frame is in chronological order, we can assume the previous row in the data frame corresponds to the previous free throw attempt. In `R`, we can use the `lag` function to refer to the previous row value in our dataframe. The code `lag(make)==TRUE` will find the rows that come right after a row where `make==TRUE`. Combined with `shot==2` and `make==TRUE`, this identifies trips where both the first and second shots were made.
 
 ```{r, warning = FALSE, message = FALSE, eval=T, echo=T}
 make_both = free_throw_data |> 
@@ -927,7 +940,7 @@ In this module, we have discussed
 
 -   How to estimate conditional probabilities from data
 
--   How to estimate the intersection of two events from data
+-   How to estimate the probability that two events both occur using data
 
 -   How unlikely it was for Paul George to miss two free throws in a game
 
