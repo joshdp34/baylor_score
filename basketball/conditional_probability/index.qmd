@@ -31,13 +31,9 @@ callout-icon: false
 
 
 
-**Intended student level:** Introductory statistics (first-year college students, including students who are not statistics or data science majors).
-
-**Estimated completion time:** 30-45 minutes.
-
 ::: {.callout-note collapse="false" title="Facilitation notes" appearance="minimal"}
 
-+ Introductory statistics (first-year college students, including students who are not statistics or data science majors).
++ The intended student level is introductory statistics (first-year college students, including students who are not statistics or data science majors).
 
 + It assumes a basic familiarity with `R`.
 

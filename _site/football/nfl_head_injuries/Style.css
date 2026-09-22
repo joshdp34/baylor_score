@@ -1,0 +1,56 @@
+/* Body */
+body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #2c2c2c;
+}
+
+/* Headers */
+h1 {
+    color: #1f4e79;
+    border-bottom: 3px solid #8db3e2;
+    padding-bottom: 8px;
+}
+
+h2 {
+    color: #2e75b6;
+}
+
+h3 {
+    color: #5b9bd5;
+}
+
+/* Links */
+a {
+    color: #2e75b6;
+}
+
+/* Code chunks */
+pre {
+    background-color: #f8f9fa;
+    border-left: 5px solid #5b9bd5;
+}
+
+/* Tables */
+table {
+    font-size: 17px;
+}
+
+/* Figure captions */
+figcaption {
+    color: #666;
+    font-style: italic;
+}
+.callout.callout-caution {
+  border-left-color: #1f4e79 !important;
+}
+
+.callout.callout-caution .callout-header {
+  background-color: #dbe9f6 !important;
+  color: #1f4e79 !important;
+}
+
+.callout.callout-caution .callout-icon {
+  color: #1f4e79 !important;
+}
