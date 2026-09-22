@@ -22,6 +22,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/basketball/conditional_probability/index.html",
       "/football/nfl_head_injuries/index.html",
       "/basketball/Clustering/index.html",
       "/mma/MMA_IRR/index.html",
@@ -32,7 +33,6 @@
       "/baseball/mlb_injuries/index.html",
       "/baseball/mlb_prime_age/index.html",
       "/golf/pga_gir_nor/index.html",
-      "/basketball/conditional_probability/index.html",
       "/golf/pga_gir/index.html",
       "/mma/mma_chisquare/index.html",
       "/tennis/tennis_sampsize/index.html",
