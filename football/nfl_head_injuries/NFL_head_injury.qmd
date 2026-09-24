@@ -11,8 +11,7 @@ author:
     email: joshua_patrick@baylor.edu
     affiliation:
       - ref: baylor
-date: September 24, 2026
-image: head_injury.png
+date: July 23, 2026
 description: "Use NFL injury records to explore one-way ANOVA, Tukey comparisons, Welch ANOVA, and Kruskal–Wallis."
 categories:
   - Football
@@ -47,35 +46,8 @@ library(tidyverse)
 library(lubridate)
 library(broom)
 library(gt)
-
-style_module_table <- function(tbl) {
-  tbl |>
-    tab_style(
-      style = cell_text(color = "white", weight = "bold"),
-      locations = cells_title(groups = "title")
-    ) |>
-    tab_style(
-      style = cell_text(color = "#e2ecf5"),
-      locations = cells_title(groups = "subtitle")
-    ) |>
-    tab_options(
-      table.font.names = "Times New Roman",
-      table.font.size = px(16),
-      heading.title.font.size = px(20),
-      heading.title.font.weight = "bold",
-      heading.background.color = "#17476b",
-      column_labels.background.color = "#f4f7f9",
-      column_labels.font.weight = "bold",
-      column_labels.border.bottom.color = "#17476b",
-      column_labels.border.bottom.width = px(2),
-      table_body.hlines.color = "#ebebeb",
-      table.border.bottom.color = "#17476b",
-      table.border.bottom.width = px(2)
-    )
-}
 library(knitr) 
 library(dplyr)
-
 
 alpha <- 0.05
 source_commit <- "bab356b2590cbc1f600054f0584509beb2af272d"
@@ -181,18 +153,13 @@ fmt_p <- function(x) {
   ifelse(x < 0.0001, "< 0.0001", paste0("= ", fmt(x, 4)))
 }
 
-library(ggplot2)
-
-theme_set(theme_minimal(base_size = 12, base_family = "Times New Roman"))
-
+theme_set(theme_minimal(base_size = 12))
 theme_update(
   panel.grid.minor = element_blank(),
   plot.title.position = "plot",
-  plot.title = element_text(family = "Times New Roman", face = "bold", color = "#17476b", size = 14),
-  axis.title = element_text(family = "Times New Roman", face = "bold", color = "#17476b"),
-  axis.text = element_text(family = "Times New Roman", color = "#333333")
+  plot.title = element_text(face = "bold", color = "#17476b"),
+  axis.title = element_text(face = "bold")
 )
-
 
 age_plot <- function(data, subtitle) {
   ggplot(data, aes(x = position_group, y = age)) +
@@ -214,8 +181,6 @@ age_plot <- function(data, subtitle) {
 
 # Introduction
 
-![](head_injury.png)
-
 Do offensive football positions differ in the ages of players appearing in head
 injury records? In this module, we use public NFL records to compare four position
 groups and examine how our conclusions depend on the question, the inclusion
@@ -227,6 +192,8 @@ record. This is not necessarily the player's first career injury or the exact
 date of injury. Earlier injuries outside the observation window are unavailable.
 The dataset also lacks an uninjured comparison group and complete exposure data
 for all players, so this analysis cannot estimate concussion risk by position.
+
+![Football Concussions](Football_concussions.jpg)
 
 ::: {.callout-note title="Before you begin"}
 **Audience:** Students in an introductory statistics course who have encountered
@@ -274,21 +241,12 @@ Our primary question is:
 We use the following categories, based on the position listed on the selected
 record:
 
-```{r}
-#| echo: false
-
-tibble::tribble(
-  ~Group, ~Positions,
-  "QB", "Quarterback",
-  "RB", "Running back and fullback",
-  "Receiver", "Wide receiver and tight end",
-  "Offensive Line (OL)", "Offensive tackle, guard, and center"
-) |>
-  gt() |>
-  tab_header(title = "Offensive Position Groups") |>
-  cols_label(Positions = "Positions included") |>
-  style_module_table()
-```
+| Group | Positions included |
+|:--|:--|
+| QB | Quarterback |
+| RB | Running back and fullback |
+| Receiver | Wide receiver and tight end |
+| Offensive Line (OL) | Offensive tackle, guard, and center |
 
 These combined groups keep the introductory comparison manageable. They still
 contain players with different roles. Long snappers are excluded as special
@@ -345,47 +303,23 @@ inclusion_counts <- tibble(
             nrow(eligible_events), nrow(first_eligible), nrow(offense),
             nrow(offense_2012))
 )
-inclusion_counts |> 
-  gt() |>
-  tab_header(
-    title = "Sample Inclusion Process"
-  ) |>
-  cols_label(
-    Stage = "Inclusion Stage",
-    Unit = "Unit",
-    Count = "Count"
-  ) |>
-  fmt_number(
-    columns = Count,
-    decimals = 0
-  ) |>
-  style_module_table()
+inclusion_counts |> gt()
 ```
 
 ::: {.callout-note collapse="true" title="What do the variables mean?"}
 
-```{r}
-#| echo: false
-
-tibble::tribble(
-  ~Variable, ~Meaning,
-  "`Player`", "Source player name; the join key and observational unit after preparation.",
-  "`Date` / `record_date`", "Source game-associated date, parsed as day/month/year. It is not independently verified as the injury date.",
-  "`Season`", "Source season label; for example, `2012/2013`.",
-  "`Position`", "Position listed on the selected event record.",
-  "`Reported Injury Type`", "Source injury classification; eligibility is restricted to `Head` or `Concussion`.",
-  "`Unknown Injury?`", "Source uncertainty flag; primary analysis requires `No`.",
-  "`Pre-Season Injury?`", "Source preseason flag; primary analysis requires `No`.",
-  "`Date of Birth` / `birth_date`", "Source date of birth, parsed as day/month/year.",
-  "`age`", "Derived approximate age in years at the selected record's associated game date.",
-  "`position_group`", "Derived offensive position category."
-) |>
-  gt() |>
-  tab_header(title = "Variable Definitions") |>
-  cols_label(Meaning = "Meaning and use") |>
-  fmt_markdown(columns = Variable) |>
-  style_module_table()
-```
+| Variable | Meaning and use |
+|:--|:--|
+| `Player` | Source player name; the join key and observational unit after preparation. |
+| `Date` / `record_date` | Source game-associated date, parsed as day/month/year. It is not independently verified as the injury date. |
+| `Season` | Source season label; for example, `2012/2013`. |
+| `Position` | Position listed on the selected event record. |
+| `Reported Injury Type` | Source injury classification; eligibility is restricted to `Head` or `Concussion`. |
+| `Unknown Injury?` | Source uncertainty flag; primary analysis requires `No`. |
+| `Pre-Season Injury?` | Source preseason flag; primary analysis requires `No`. |
+| `Date of Birth` / `birth_date` | Source date of birth, parsed as day/month/year. |
+| `age` | Derived approximate age in years at the selected record's associated game date. |
+| `position_group` | Derived offensive position category. |
 
 The source provides player biography links, but its files do not fully document
 the original injury collection and verification process. Retain this limitation
@@ -436,35 +370,19 @@ date is known precisely.
 ```{r}
 #| label: tbl-age-summary
 #| echo: false
-#| message: false
-#| warning: false
 #| tbl-cap: "Approximate age in years at the first qualifying record, 2012/2013."
 age_summary |>
   gt() |>
-  tab_header(
-    title = "Age Summary by Position Group"
-  ) |>
-  cols_label(
-    position_group = "Position Group",
-    n = "Players",
-    mean_age = "Mean Age",
-    median_age = "Median Age",
-    sd_age = "SD",
-    min_age = "Min",
-    max_age = "Max"
-  ) |>
-  fmt_number(
-    columns = c(mean_age, median_age, sd_age, min_age, max_age),
-    decimals = 2
-  ) |>
-  style_module_table()
+  cols_label(position_group = "Position group", n = "Players",
+             mean_age = "Mean", median_age = "Median", sd_age = "SD",
+             min_age = "Min", max_age = "Max") |>
+  fmt_number(columns = c(mean_age, median_age, sd_age, min_age, max_age),
+             decimals = 2)
 ```
 
 ```{r}
 #| label: fig-age-2012
-#| echo: false 
-#| message: false
-#| warning: false
+#| echo: false
 #| fig-cap: "Boxplots with all individual player ages. Horizontal positions show age; small vertical offsets separate overlapping points."
 #| fig-alt: "Four horizontal boxplots with individual ages. The quarterback group has six players and the highest mean; running backs have the lowest mean."
 age_plot(offense_2012, "2012/2013; one record per included player")
@@ -504,7 +422,7 @@ generalizability depends on assumptions the files cannot verify. Set
 $\alpha = 0.05$ before examining the tests.
 
 ## Fit the model, then assess it before interpreting it
-::: {.callout-note collapse="true" title="Run an ANOVA in R Studio"}
+
 ```{r}
 #| label: fit-anova-2012
 #| message: false
@@ -512,13 +430,6 @@ library(tidyverse)
 offense_2012 <- read_csv("offense_2012.csv")
 anova_2012 <- aov(age ~ position_group, data = offense_2012)
 ```
-:::
-
-::: column-margin
-Instead of downloading the file and reading it from your computer, you can read the data into `R` from an online location using the code
-`offense_2012 <- read_csv("https://joshdp34.github.io/baylor_score/football/nfl_head_injuries/offense_2012.csv")`
-:::
-
 
 The classical ANOVA model assumes independent errors, approximately normal error
 distributions within groups, and equal population error variances. The categorical
@@ -533,9 +444,7 @@ explanatory variable and quantitative response describe the model's setup.
   is invalid. Small groups give limited information about distribution shape.
 - **Equal variances:** Compare group spreads, considering unequal sample sizes.
   The smallest group can make this assumption especially consequential.
-  
-  
-::: {.callout-note collapse="true" title="Obtain Residuals from ANOVA"}
+
 ```{r}
 #| label: fig-diagnostics-2012
 #| fig-cap: "Residual Q–Q plot and residuals versus fitted group means for the classical ANOVA model."
@@ -546,8 +455,6 @@ plot(anova_2012, which = 2, id.n = 0)
 plot(anova_2012, which = 1, id.n = 0)
 par(old_par)
 ```
-:::
-
 
 The fitted values are group means, so the second plot has four vertical bands.
 Look for differences in vertical spread. The QQ plot checks the pooled residual
@@ -571,69 +478,27 @@ Do not use a normality test as an automatic switch between methods: a large
 p-value does not verify normality, especially with a small group.
 :::
 
-
 ## Read the ANOVA results
 
-::: {.callout-note collapse="true" title="Get ANOVA Results"}
 ```{r}
 #| label: anova-results-2012
-#| message: false
-#| warning: false
-#| output: false
-
 anova_terms <- tidy(anova_2012)
 summary(anova_2012)
 ```
-:::
-
 
 ```{r}
 #| label: tbl-anova-2012
 #| echo: false
 #| tbl-cap: "Classical one-way ANOVA for the primary 2012/2013 sample."
-#| message: false
-#| warning: false
-
-library(gt)
-library(broom)
-library(dplyr)
-
-anova_terms <- tidy(anova_2012)
-
 anova_terms |>
+  mutate(term = recode(term, position_group = "Position group")) |>
   gt() |>
-  tab_header(
-    title = md("**Analysis of Variance (ANOVA) Results**"),
-    subtitle = "2012/2013 Season"
-  ) |>
-  cols_label(
-    term = "Predictor Term",
-    df = "df",
-    sumsq = "Sum Sq",
-    meansq = "Mean Sq",
-    statistic = "F",
-    p.value = "p-value"
-  ) |>
-  fmt_number(
-    columns = c(sumsq, meansq, statistic),
-    decimals = 2
-  ) |>
-  fmt_number(
-    columns = p.value,
-    decimals = 4
-  ) |>
-  sub_missing(missing_text = "-") |>
-  text_transform(
-    locations = cells_body(columns = term),
-    fn = function(x) {
-      case_match(
-        x,
-        "position_group" ~ "Position Group",
-        .default = x
-      )
-    }
-  ) |>
-  style_module_table()
+  cols_label(term = "Source", df = "df", sumsq = "Sum of squares",
+             meansq = "Mean square", statistic = "F", p.value = "p-value") |>
+  fmt_number(columns = df, decimals = 0) |>
+  fmt_number(columns = c(sumsq, meansq, statistic), decimals = 3) |>
+  fmt_number(columns = p.value, decimals = 4) |>
+  sub_missing(missing_text = "—")
 ```
 
 ```{r}
@@ -681,11 +546,6 @@ variation; its evidential meaning depends on its reference distribution and
 degrees of freedom.
 :::
 
-
-
-
-
-
 # Part 3: Tukey pairwise comparisons
 
 ANOVA addresses whether all means are equal; it does not identify particular
@@ -694,42 +554,26 @@ compares all pairs using the classical model's pooled variance. The intervals
 are approximate simultaneous 95% confidence intervals for the family of six
 comparisons with these unequal group sizes, subject to the model assumptions.
 
-::: {.callout-note collapse="true" title="Run Tukey's HSD in R Studio"}
-
 ```{r}
 #| label: tukey-2012
 tukey_2012 <- TukeyHSD(anova_2012, conf.level = 0.95)
 tukey_table <- tidy(tukey_2012) |>
   select(contrast, estimate, conf.low, conf.high, adj.p.value)
 ```
-:::
-
 
 ```{r}
 #| label: tbl-tukey-2012
 #| echo: false
 #| tbl-cap: "Tukey comparisons. Each estimate is the first named group's mean minus the second named group's mean, in years."
-
-library(gt)
-
 tukey_table |>
   gt() |>
-  tab_header(
-    title = md("**Tukey's HSD**"),
-    subtitle = "2012/2013 Season"
-  ) |>
-  cols_label(
-    contrast = "Comparison", 
-    estimate = "Difference (years)",
-    conf.low = "Lower 95% CI",
-    conf.high = "Upper 95% CI",
-    adj.p.value = "Adjusted p-value"
-  ) |>
+  cols_label(contrast = "Comparison", estimate = "Difference (years)",
+             conf.low = "Lower simultaneous 95% CI",
+             conf.high = "Upper simultaneous 95% CI",
+             adj.p.value = "Adjusted p-value") |>
   fmt_number(columns = c(estimate, conf.low, conf.high), decimals = 2) |>
-  fmt_number(columns = adj.p.value, decimals = 4) |>
-  style_module_table()
+  fmt_number(columns = adj.p.value, decimals = 4)
 ```
-
 
 ```{r}
 #| label: tukey-inline-values
@@ -739,12 +583,12 @@ stopifnot(nrow(rb_qb) == 1)
 ```
 
 For `RB-QB`, the estimated difference is `r fmt(rb_qb$estimate)` years, with
-simultaneous 95% interval [`r fmt(rb_qb$conf.low)`,
-`r fmt(rb_qb$conf.high)`] and adjusted $p `r fmt_p(rb_qb$adj.p.value)`$.
+simultaneous 95% interval (`r fmt(rb_qb$conf.low)`,
+`r fmt(rb_qb$conf.high)`) and adjusted $p `r fmt_p(rb_qb$adj.p.value)`$.
 Equivalently, the sample mean for quarterbacks is
 `r fmt(-rb_qb$estimate)` years higher than for running backs. Reversing the
-comparison gives interval [`r fmt(-rb_qb$conf.high)`,
-`r fmt(-rb_qb$conf.low)`] years.
+comparison gives interval (`r fmt(-rb_qb$conf.high)`,
+`r fmt(-rb_qb$conf.low)`) years.
 
 <!-- The width of the interval matters: the magnitude remains uncertain, and the -->
 <!-- small quarterback group limits precision. Tukey's method does not correct -->
@@ -765,64 +609,12 @@ assuming equal population variances. It still requires independent observations
 and appropriate distributional conditions; it is not a remedy for every model
 problem. R implements it with `oneway.test()`.
 
-::: {.callout-note collapse="true" title="Run Welch's ANOVA in R Studio"}
-
-```{r}
-#| warning: false
-#| output: false
-
-welch_2012 <- oneway.test(
-  age ~ position_group, data = offense_2012, var.equal = FALSE
-)
-welch_df <- tidy(welch_2012)
-welch_2012
-```
-:::
-
 ```{r}
 #| label: welch-2012
-#| echo: false
-#| message: false
-#| warning: false
-
-library(gt)
-library(broom)
-library(dplyr)
-
-# 1. Run the test and convert the raw console output into a clean dataframe
 welch_2012 <- oneway.test(
   age ~ position_group, data = offense_2012, var.equal = FALSE
 )
-welch_df <- tidy(welch_2012)
-
-welch_df |>
-  gt() |>
-  cols_hide(columns = method) |> 
-  tab_header(
-    title = md("**Welch's One-Way ANOVA**"),
-    subtitle = "2012/2013 Season"
-  ) |>
-  # Rename columns to clear statistical labels
-  cols_label(
-    num.df = "Numerator df",
-    den.df = "Denominator df",
-    statistic = "F",
-    p.value = "p-value"
-  ) |>
-  # Round numbers cleanly (p-values get 4 decimals, statistics get 2 or 3)
-  fmt_number(
-    columns = c(num.df, den.df),
-    decimals = 1
-  ) |>
-  fmt_number(
-    columns = statistic,
-    decimals = 3
-  ) |>
-  fmt_number(
-    columns = p.value,
-    decimals = 4
-  ) |>
-  style_module_table()
+welch_2012
 ```
 
 Welch's test gives $F = `r fmt(unname(welch_2012$statistic), 3)`$ with
@@ -859,60 +651,13 @@ Kruskal–Wallis is particularly useful for location differences. With comparabl
 distribution shapes and spreads, it can be interpreted as a comparison of
 locations, including medians. Without those conditions, do not describe it simply
 as a test of equal medians: differing shapes or spreads can affect rank patterns,
-and it does not detect every possible distributional difference..
-
-::: {.callout-note collapse="true" title="Run Krusal-Wallis Test in R Studio"}
+and it does not detect every possible distributional difference.
 
 ```{r}
 #| label: kruskal-2012
-#| output: false
-
-
 kruskal_2012 <- kruskal.test(age ~ position_group, data = offense_2012)
 kruskal_2012
 ```
-:::
-
-```{r}
-#| echo: false
-
-library(gt)
-library(broom)
-library(dplyr)
-
-# 1. Run the test and convert the raw console output into a clean dataframe
-kruskal_2012 <- kruskal.test(age ~ position_group, data = offense_2012)
-kruskal_df <- tidy(kruskal_2012)
-
-# 2. Format the dataframe into your styled theme table
-kruskal_df |>
-  gt() |>
-  cols_hide(columns = method) |> 
-  # Add table titles matching your project layout
-  tab_header(
-    title = md("**Kruskal-Wallis Rank Sum Test**"),
-    subtitle = "2012/2013 Season)"
-  ) |>
-  cols_label(
-    parameter = "df",
-    statistic = "Chi-Squared",
-    p.value = "p-value"
-  ) |>
-  fmt_number(
-    columns = parameter,
-    decimals = 0
-  ) |>
-  fmt_number(
-    columns = statistic,
-    decimals = 3
-  ) |>
-  fmt_number(
-    columns = p.value,
-    decimals = 4
-  ) |>
-  style_module_table()
-```
-
 
 The test gives $H = `r fmt(unname(kruskal_2012$statistic), 3)`$ with
 `r unname(kruskal_2012$parameter)` degrees of freedom and
@@ -935,20 +680,8 @@ tibble(
 ) |>
   mutate(`Decision at 0.05` = if_else(p_value < alpha, "Reject H0", "Do not reject H0")) |>
   gt() |>
-  tab_header(
-    title = "Comparison of Statistical Methods"
-  ) |>
-  cols_label(
-    Method = "Method",
-    Target = "Statistical Target",
-    p_value = "p-value",
-    `Decision at 0.05` = "Decision (α = 0.05)"
-  ) |>
-  fmt_number(
-    columns = p_value,
-    decimals = 4
-  ) |>
-  style_module_table()
+  cols_label(p_value = "p-value") |>
+  fmt_number(columns = p_value, decimals = 4)
 ```
 
 ::: {.callout-tip title="What should we conclude?"}
@@ -971,21 +704,13 @@ To practice pairwise rank-based inference, use **Wilcoxon rank-sum tests** with 
 error rate when the individual tests provide valid p-values. It does not adjust
 for every analysis or inclusion rule explored elsewhere in the module.
 
-::: {.callout-note collapse="true" title="Obtain Wilcoxon rank-sum tests with Holm adjustment"}
 ```{r}
-#| echo: true
-#| message: true
-
+#| label: wilcoxon-2012
 wilcoxon_2012 <- pairwise.wilcox.test(
-  offense_2012$age,
-  offense_2012$position_group,
-  p.adjust.method = "holm",
-  exact = FALSE
+  offense_2012$age, offense_2012$position_group,
+  p.adjust.method = "holm", exact = FALSE
 )
-
 ```
-:::
-
 
 Here, `exact = FALSE` explicitly requests the normal approximation; the default
 continuity correction is retained. Ages can be tied. Approximation quality is
@@ -1005,18 +730,15 @@ wilcoxon_table <- wilcoxon_2012$p.value |>
 
 wilcoxon_table |>
   gt() |>
-  tab_header(title = "Pairwise Wilcoxon Comparisons") |>
   cols_label(p_value = "Holm-adjusted p-value") |>
-  fmt_number(columns = p_value, decimals = 4) |>
-  style_module_table()
+  fmt_number(columns = p_value, decimals = 4)
 ```
 
-
 The smallest adjusted p-value is
-`r fmt(min(wilcoxon_2012$p.value, na.rm=TRUE), 4)`. No pair is significant at 0.05 under
-this procedure. An omnibus test and adjusted pairwise tests can reach different
+`r fmt(min(wilcoxon_table$p_value), 4)`. No pair is significant at 0.05 under
+this procedure. An global test and adjusted pairwise tests can reach different
 decisions: they ask different questions and use different rejection rules.
-An omnibus rejection does not guarantee that this particular pairwise procedure
+An global rejection does not guarantee that this particular pairwise procedure
 will identify a significant pair.
 
 ::: {.callout-note collapse="true" title="Why not Dunn's test?"}
@@ -1058,25 +780,7 @@ events |>
   group_by(Season) |>
   summarise(First = min(record_date), Last = max(record_date),
             Events = n(), .groups = "drop") |>
-  gt() |>
-  tab_header(
-    title = "Events by Season"
-  ) |>
-  cols_label(
-    Season = "Season",
-    First = "First Event",
-    Last = "Last Event",
-    Events = "Number of Events"
-  ) |>
-  fmt_date(
-    columns = c(First, Last),
-    date_style = 1
-  ) |>
-  fmt_number(
-    columns = Events,
-    decimals = 0
-  ) |>
-  style_module_table()
+  gt()
 ```
 :::
 
@@ -1095,13 +799,12 @@ notes.
 5. **Compare.** Report classical ANOVA, Welch ANOVA, and Kruskal–Wallis results.
    Explain what differs between their targets and assumptions.
 6. **Follow up.** For teaching comparison, compute Tukey intervals and
-   Holm-adjusted pairwise Wilcoxon p-values even if an omnibus test is not
+   Holm-adjusted pairwise Wilcoxon p-values even if an global test is not
    significant. Label these as demonstrations; do not describe them as required
    follow-ups to a rejected null unless that null was actually rejected.
 7. **Communicate.** Write a short conclusion including an observed difference
    in years, uncertainty, and one limitation. Can you infer a rule effect?
 
-:::{.callout-note collapse=true title="Load, Summarize, and Analyze Data in R Studio"}
 ```{r}
 #| label: extension-starter
 #| eval: false
@@ -1123,12 +826,6 @@ pairwise.wilcox.test(
   p.adjust.method = "holm", exact = FALSE
 )
 ```
-:::
-
-::: column-margin
-Instead of downloading the file and reading it from your computer, you can read the data into `R` from an online location using the code
-`offense_2013 <- read_csv("https://joshdp34.github.io/baylor_score/football/nfl_head_injuries/offense_2013.csv")`
-:::
 
 # Discussion and takeaways
 
@@ -1142,7 +839,7 @@ Instead of downloading the file and reading it from your computer, you can read 
 4. Would a Kruskal–Wallis p-value of 0.053 establish equal age distributions?
 5. Can an injury-record dataset without uninjured players identify the position
    with the greatest concussion risk?
-6. Why might an omnibus test reject while adjusted pairwise tests do not?
+6. Why might an global test reject while adjusted pairwise tests do not?
 7. How could uncertain records and incomplete season coverage affect the
    conclusions?
 
@@ -1177,7 +874,7 @@ find the smallest p-value.
 
 **Pairwise comparisons:** The `RB-QB` Tukey interval excludes zero. A negative
 estimate means the running-back mean is lower. All six Holm-adjusted Wilcoxon
-p-values exceed 0.05. The omnibus and pairwise methods have different hypotheses
+p-values exceed 0.05. The global and pairwise methods have different hypotheses
 and rejection regions, so their decisions need not coincide.
 
 **Discussion:** With positive within-group mean square, the minimum F is zero.
@@ -1192,60 +889,24 @@ not justify choosing eligibility rules after viewing p-values.
 ```{r}
 #| label: extension-answer-models
 #| echo: false
-#| message: false
-#| warning: false
 summary_2013 <- summarize_age(offense_2013)
-anova_2013 <- aov(
-  age ~ position_group,
-  data = offense_2013
-)
-
-welch_2013 <- oneway.test(
-  age ~ position_group,
-  data = offense_2013
-)
-
-kruskal_2013 <- kruskal.test(
-  age ~ position_group,
-  data = offense_2013
-)
-
-tukey_2013 <- tidy(
-  TukeyHSD(anova_2013)
-)
-
+anova_2013 <- aov(age ~ position_group, data = offense_2013)
+welch_2013 <- oneway.test(age ~ position_group, data = offense_2013)
+kruskal_2013 <- kruskal.test(age ~ position_group, data = offense_2013)
+tukey_2013 <- tidy(TukeyHSD(anova_2013))
 wilcoxon_2013 <- pairwise.wilcox.test(
-  offense_2013$age,
-  offense_2013$position_group,
-  p.adjust.method = "holm",
-  exact = FALSE
+  offense_2013$age, offense_2013$position_group,
+  p.adjust.method = "holm", exact = FALSE
 )
-
 summary_2013 |>
   gt() |>
-  tab_header(
-    title = "Age Summary by Position Group"
-  ) |>
-  cols_label(
-    position_group = "Position Group",
-    mean_age = "Mean Age",
-    median_age = "Median Age",
-    sd_age = "SD",
-    min_age = "Min",
-    max_age = "Max"
-  ) |>
-  fmt_number(
-    columns = c(mean_age, median_age, sd_age, min_age, max_age),
-    decimals = 2
-  ) |>
-  style_module_table()
+  fmt_number(columns = c(mean_age, median_age, sd_age, min_age, max_age),
+             decimals = 2)
 ```
 
 ```{r}
 #| label: fig-extension-ages
 #| echo: false
-#| message: false
-#| warning: false
 #| fig-cap: "Approximate ages for the 2013/2014 first-qualifying-record cohort."
 #| fig-alt: "Boxplots and individual player ages for the four offensive groups in the 2013/2014 first-record cohort."
 age_plot(offense_2013, "2013/2014; first qualifying record in the dataset")
@@ -1255,130 +916,60 @@ age_plot(offense_2013, "2013/2014; first qualifying record in the dataset")
 #| label: fig-extension-diagnostics
 #| echo: false
 #| fig-height: 4.5
-#| message: false
-#| warning: false
 #| fig-cap: "Residual diagnostics for the 2013/2014 extension."
 #| fig-alt: "Normal Q–Q plot and residuals versus fitted group means for the 2013/2014 ANOVA model."
-old_par <- par(
-  mfrow = c(1, 2),
-  mar = c(4.5, 4.5, 2.5, 1),
-  family = "Times New Roman",
-  cex = 1
-)
-
-plot(
-  anova_2013,
-  which = 2,
-  id.n = 0,
-  main = ""
-)
-
-plot(
-  anova_2013,
-  which = 1,
-  id.n = 0,
-  main = ""
-)
-
+old_par <- par(mfrow = c(1, 2))
+plot(anova_2013, which = 2, id.n = 0)
+plot(anova_2013, which = 1, id.n = 0)
 par(old_par)
 ```
 
 ```{r}
 #| label: tbl-extension-tests
 #| echo: false
-#| message: false
-#| warning: false
 tibble(
-  Method = c(
-    "Classical ANOVA",
-    "Welch ANOVA",
-    "Kruskal–Wallis"
-  ),
-  Statistic = c(
-    tidy(anova_2013)$statistic[1],
-    unname(welch_2013$statistic),
-    unname(kruskal_2013$statistic)
-  ),
-  p_value = c(
-    tidy(anova_2013)$p.value[1],
-    welch_2013$p.value,
-    kruskal_2013$p.value
-  )
+  Method = c("Classical ANOVA", "Welch ANOVA", "Kruskal–Wallis"),
+  Statistic = c(tidy(anova_2013)$statistic[1],
+                unname(welch_2013$statistic), unname(kruskal_2013$statistic)),
+  p_value = c(tidy(anova_2013)$p.value[1], welch_2013$p.value,
+              kruskal_2013$p.value)
 ) |>
   gt() |>
-  tab_header(
-    title = "Comparison of Statistical Tests"
-  ) |>
-  cols_label(
-    Method = "Method",
-    Statistic = "Test Statistic",
-    p_value = "p-value"
-  ) |>
-  fmt_number(
-    columns = Statistic,
-    decimals = 3
-  ) |>
-  fmt_number(
-    columns = p_value,
-    decimals = 4
-  ) |>
-  style_module_table()
+  cols_label(p_value = "p-value") |>
+  fmt_number(columns = Statistic, decimals = 3) |>
+  fmt_number(columns = p_value, decimals = 4)
 ```
 
 ```{r}
 #| label: tbl-extension-tukey
 #| echo: false
-#| message: false
-#| warning: false
 tukey_2013 |>
   select(contrast, estimate, conf.low, conf.high, adj.p.value) |>
   gt() |>
-  tab_header(title = "Tukey's HSD") |>
   cols_label(contrast = "Comparison", estimate = "Difference (years)",
-             conf.low = "Lower 95% CI",
-             conf.high = "Upper 95% CI",
+             conf.low = "Lower simultaneous 95% CI",
+             conf.high = "Upper simultaneous 95% CI",
              adj.p.value = "Adjusted p-value") |>
   fmt_number(columns = c(estimate, conf.low, conf.high), decimals = 2) |>
-  fmt_number(columns = adj.p.value, decimals = 4
-  ) |>
-  style_module_table()
+  fmt_number(columns = adj.p.value, decimals = 4)
 ```
 
 ```{r}
 #| label: tbl-extension-wilcoxon
 #| echo: false
-#| message: false
-#| warning: false
 wilcoxon_2013$p.value |>
   as.data.frame() |>
   rownames_to_column("Group") |>
-  pivot_longer(
-    -Group,
-    names_to = "Compared with",
-    values_to = "p_value"
-  ) |>
+  pivot_longer(-Group, names_to = "Compared with", values_to = "p_value") |>
   filter(!is.na(p_value)) |>
   gt() |>
-  tab_header(
-    title = "Pairwise Wilcoxon Comparisons"
-  ) |>
-  cols_label(
-    Group = "Position Group",
-    `Compared with` = "Compared With",
-    p_value = "Holm-Adjusted p-value"
-  ) |>
-  fmt_number(
-    columns = p_value,
-    decimals = 4
-  ) |>
-  style_module_table()
+  cols_label(p_value = "Holm-adjusted p-value") |>
+  fmt_number(columns = p_value, decimals = 4)
 ```
 
 ```{r}
 #| label: extension-inline-values
 #| include: false
-#| message: false
-#| warning: false
 rb_qb_2013 <- tukey_2013 |> filter(contrast == "RB-QB")
 ```
 
